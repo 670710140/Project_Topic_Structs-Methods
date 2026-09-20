@@ -12,7 +12,7 @@
 | # | Name | Student ID | GitHub Username | Main Responsibility |
 |---|---|---|---|---|
 | 1 | `[นายพงศ์ชยุตม์ หัวใจเพ็ชร์]` | `[670710137]` | `@[username]` | Concept + Code |
-| 2 | `[นายพชรพล อาจม่วง]` | `[670710138]` | `@[username]` | Code + Demo |
+| 2 | `[นายพชรพล อาจม่วง]` | `[670710138]` | `@[ุึ670710138]` | Code + Demo |
 | 3 | `[นายพิชัยพร พลบเนียม]` | `[670710139]` | `@[username]` | Rust vs Other Language + PPL |
 | 4 | `[นายภัทรดนัย คนชม]` | `[ุ670710140]` | `@[670710140]` | Exercises + Common Mistakes |
 

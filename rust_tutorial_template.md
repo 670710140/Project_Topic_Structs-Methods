@@ -9,12 +9,12 @@
 
 ## 1. Members
 
-| # | Name | Student ID | GitHub Username | Main Responsibility |
-|---|---|---|---|---|
-| 1 | `[นายพงศ์ชยุตม์ หัวใจเพ็ชร์]` | `[670710137]` | `@[username]` | Concept + Code |
-| 2 | `[นายพชรพล อาจม่วง]` | `[670710138]` | `@[670710138]` | Code + Demo |
-| 3 | `[นายพิชัยพร พลบเนียม]` | `[670710139]` | `@[username]` | Rust vs Other Language + PPL |
-| 4 | `[นายภัทรดนัย คนชม]` | `[ุ670710140]` | `@[670710140]` | Exercises + Common Mistakes |
+| #   | Name                    | Student ID    | GitHub Username | Main Responsibility          |
+| --- | ----------------------- | ------------- | --------------- | ---------------------------- |
+| 1   | `[นายพงศ์ชยุตม์ หัวใจเพ็ชร์]` | `[670710137]` | `@[username]`   | Concept + Code               |
+| 2   | `[นายพชรพล อาจม่วง]`     | `[670710138]` | `@[670710138]`  | Code + Demo                  |
+| 3   | `[นายพิชัยพร พลบเนียม]`    | `[670710139]` | `@[username]`   | Rust vs Other Language + PPL |
+| 4   | `[นายภัทรดนัย คนชม]`      | `[ุ670710140]` | `@[670710140]`  | Exercises + Common Mistakes  |
 
 ---
 
@@ -101,8 +101,8 @@ fn main() {
 
 ## 5. Important Syntax / Rules
 
-| Syntax / Rule | Meaning | Example |
-|---|---|---|
+| Syntax / Rule   | Meaning      | Example    |
+| --------------- | ------------ | ---------- |
 | `[syntax/rule]` | `[ความหมาย]` | `[ตัวอย่าง]` |
 | `[syntax/rule]` | `[ความหมาย]` | `[ตัวอย่าง]` |
 | `[syntax/rule]` | `[ความหมาย]` | `[ตัวอย่าง]` |
@@ -119,25 +119,95 @@ fn main() {
 
 > **ข้อกำหนด:** Code ทุกตัวต้อง Compile และ Run ได้จริงก่อนนำมาใส่ในเอกสาร
 
-### Example 1 — `[ชื่อ Example]`
+### Example 1 — `[ชื่อ การสร้าง Struct และการเรียกระหว่าง Associated Function กับ Methods]`
 
-**Purpose:** `[ต้องการสาธิตอะไร]`
+**Purpose:** `[สาธิตการประกาศ Struct, การสร้าง Associated Function (new), การใช้ Method อ่าน/แก้ไขข้อมูล (&self, &mut self), และการใช้ Method ที่ย้าย Ownership (self)]`
 
 ```rust
+#[derive(Debug)]
+struct UserAccount {
+    username: String,
+    balance: f64,
+    active: bool,
+}
+
+impl UserAccount {
+    fn new(username: &str, initial_balance: f64) -> Self {
+        Self {
+            username: username.to_string(),
+            balance: initial_balance,
+            active: true,
+        }
+    }
+
+    fn get_balance(&self) -> f64 {
+        self.balance
+    }
+
+    fn deposit(&mut self, amount: f64) {
+        if amount > 0.0 {
+            self.balance += amount;
+            println!("✅ ฝากเงินสำเร็จ: +${:.2} | ยอดคงเหลือปัจจุบัน: ${:.2}", amount, self.balance);
+        } else {
+            println!("❌ จำนวนเงินฝากต้องมากกว่า 0");
+        }
+    }
+
+    fn withdraw(&mut self, amount: f64) -> Result<f64, String> {
+        if amount <= 0.0 {
+            Err("จำนวนเงินถอนต้องมากกว่า 0".to_string())
+        } else if amount > self.balance {
+            Err("ยอดเงินคงเหลือไม่เพียงพอ".to_string())
+        } else {
+            self.balance -= amount;
+            Ok(self.balance)
+        }
+    }
+
+    fn close_account(self) -> f64 {
+        println!("🔒 ปิดบัญชีของ {} สำเร็จ คืนเงินคงเหลือ: ${:.2}", self.username, self.balance);
+        self.balance
+    }
+}
+
 fn main() {
-    // Write your runnable Rust code here
+    let mut my_account = UserAccount::new("Alice", 100.0);
+    println!("เริ่มต้นบัญชี: {:?}", my_account);
+
+    println!("ยอดเงินเริ่มต้น: ${:.2}", my_account.get_balance());
+
+    my_account.deposit(50.0);
+
+    match my_account.withdraw(30.0) {
+        Ok(new_balance) => println!("✅ ถอนเงินสำเร็จ ยอดคงเหลือ: ${:.2}", new_balance),
+        Err(e) => println!("❌ เกิดข้อผิดพลาด: {}", e),
+    }
+
+    let refunded = my_account.close_account();
+    println!("เงินคืนเข้ามือ: ${:.2}", refunded);
 }
 ```
 
 **Expected Output**
 
 ```text
-[expected output]
+เริ่มต้นบัญชี: UserAccount { username: "Alice", balance: 100.0, active: true }
+ยอดเงินเริ่มต้น: $100.00
+✅ ฝากเงินสำเร็จ: +$50.00 | ยอดคงเหลือปัจจุบัน: $150.00
+✅ ถอนเงินสำเร็จ ยอดคงเหลือ: $120.00
+🔒 ปิดบัญชีของ Alice สำเร็จ คืนเงินคงเหลือ: $120.00
+เงินคืนเข้ามือ: $120.00
 ```
 
 **Explanation**
 
-`[อธิบาย code ทีละส่วนที่สำคัญ]`
+- **`struct UserAccount`**: การนิยามโครงสร้างข้อมูลเพื่อเก็บสเตตของผู้ใช้ ประกอบด้วย `username`, `balance`, และ `active`
+- **`#[derive(Debug)]`**: ช่วยให้สามารถพิมพ์ค่าของ Struct ออกมาทางหน้าจอโดยใช้ฟอร์แมต `{:?}` เพื่อการ Debugging ได้สะดวก
+- **`impl UserAccount`**: บล็อกสำหรับเขียนฟังก์ชันเฉพาะของ Struct
+- **`fn new(...)`**: เป็น **Associated Function** (ไม่ได้รับ `self`) ทำหน้าที่เป็น Constructor เพื่อสร้าง Instance ใหม่ของ Struct
+- **`fn get_balance(&self)`**: เป็น **Immutable Method** ยืมอ่านค่าฟิลด์ `balance` โดยไม่มีการเปลี่ยนแปลงข้อมูลภายใน
+- **`fn deposit(&mut self, ...)` & `fn withdraw(&mut self, ...)`**: เป็น **Mutable Methods** ยืมสิทธิ์เข้าถึงเพื่อปรับแต่งแก้ไขค่า `balance` ภายใน Struct
+- **`fn close_account(self)`**: เป็น **Ownership Consumer Method** โดยรับ `self` ไปตรง ๆ ทำให้ Instance นั้นถูกย้าย Ownership (Move) และย้อนกลับมาใช้งานอีกไม่ได้หลังจบคำสั่ง เพื่อความปลอดภัยด้านหน่วยความจำ
 
 ---
 
@@ -515,13 +585,13 @@ book.show_info();
 
 **Comparison Language:** `[Python / C / C++ / Java / Kotlin / ...]`
 
-| Aspect | Rust | Other Language |
-|---|---|---|
-| Syntax | `[อธิบาย]` | `[อธิบาย]` |
-| Semantics / Behavior | `[อธิบาย]` | `[อธิบาย]` |
-| Type System | `[อธิบาย]` | `[อธิบาย]` |
-| Memory Management | `[อธิบาย]` | `[อธิบาย]` |
-| Safety | `[อธิบาย]` | `[อธิบาย]` |
+| Aspect               | Rust      | Other Language |
+| -------------------- | --------- | -------------- |
+| Syntax               | `[อธิบาย]` | `[อธิบาย]`      |
+| Semantics / Behavior | `[อธิบาย]` | `[อธิบาย]`      |
+| Type System          | `[อธิบาย]` | `[อธิบาย]`      |
+| Memory Management    | `[อธิบาย]` | `[อธิบาย]`      |
+| Safety               | `[อธิบาย]` | `[อธิบาย]`      |
 
 ### Rust Example
 
@@ -545,11 +615,11 @@ book.show_info();
 
 การนำเสนอมีสมาชิก **4 คน คนละประมาณ 5 นาที**
 
-| Member | Responsibility | Time |
-|---|---|---:|
-| Member 1 | Concept + Short Code Illustration | 5 min |
-| Member 2 | Detailed Code + Live Demo | 5 min |
-| Member 3 | Rust vs Other Language + PPL Analysis | 5 min |
+| Member   | Responsibility                          |  Time |
+| -------- | --------------------------------------- | ----: |
+| Member 1 | Concept + Short Code Illustration       | 5 min |
+| Member 2 | Detailed Code + Live Demo               | 5 min |
+| Member 3 | Rust vs Other Language + PPL Analysis   | 5 min |
 | Member 4 | Exercises + Common Mistakes + Challenge | 5 min |
 
 ### Individual Contribution
@@ -589,10 +659,10 @@ book.show_info();
 
 สามารถใช้ AI เป็นเครื่องมือช่วยเรียนรู้และพัฒนาได้ แต่สมาชิกทุกคนต้องเข้าใจและสามารถอธิบายผลงานของกลุ่มได้
 
-| AI Tool | Purpose | How the Result Was Verified |
-|---|---|---|
-| `[เช่น ChatGPT]` | `[ใช้เพื่ออะไร]` | `[ตรวจสอบอย่างไร]` |
-| `[AI tool]` | `[ใช้เพื่ออะไร]` | `[ตรวจสอบอย่างไร]` |
+| AI Tool         | Purpose       | How the Result Was Verified |
+| --------------- | ------------- | --------------------------- |
+| `[เช่น ChatGPT]` | `[ใช้เพื่ออะไร]` | `[ตรวจสอบอย่างไร]`           |
+| `[AI tool]`     | `[ใช้เพื่ออะไร]` | `[ตรวจสอบอย่างไร]`           |
 
 ### Declaration
 
@@ -609,12 +679,12 @@ book.show_info();
 
 ## 14. GitHub Contribution
 
-| Member | Issues | Commits | Pull Requests | Code Reviews | Contribution |
-|---|---:|---:|---:|---:|---|
-| Member 1 | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[รายละเอียด]` |
-| Member 2 | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[รายละเอียด]` |
-| Member 3 | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[รายละเอียด]` |
-| Member 4 | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[รายละเอียด]` |
+| Member   |   Issues |  Commits | Pull Requests | Code Reviews | Contribution  |
+| -------- | -------: | -------: | ------------: | -----------: | ------------- |
+| Member 1 | `[จำนวน]` | `[จำนวน]` |      `[จำนวน]` |     `[จำนวน]` | `[รายละเอียด]` |
+| Member 2 | `[จำนวน]` | `[จำนวน]` |      `[จำนวน]` |     `[จำนวน]` | `[รายละเอียด]` |
+| Member 3 | `[จำนวน]` | `[จำนวน]` |      `[จำนวน]` |     `[จำนวน]` | `[รายละเอียด]` |
+| Member 4 | `[จำนวน]` | `[จำนวน]` |      `[จำนวน]` |     `[จำนวน]` | `[รายละเอียด]` |
 
 ### Teamwork Reflection
 

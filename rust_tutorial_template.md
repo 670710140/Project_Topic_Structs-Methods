@@ -165,100 +165,318 @@ fn main() {
 
 ## 7. Common Mistakes
 
-### Mistake 1 — `[ชื่อข้อผิดพลาด]`
+### Mistake 1 — `[ลืม &self ใน Method]`
 
 **Problem**
 
 `[อธิบายปัญหา]`
+สร้าง Method ที่ต้องการเข้าถึงข้อมูลของ Struct แต่ไม่ได้ใส่ &self
 
 **Incorrect Code**
 
 ```rust
-// Incorrect example
+struct Student {
+    name: String,
+    age: i32,
+}
+    impl Student {
+        fn show_info(!!!!) {
+            println!("ชื่อ: {}", self.name);
+            println!("อายุ: {}", self.age);
+        }
+    }
 ```
 
 **Correct Code**
 
 ```rust
-// Correct example
+struct Student {
+    name: String,
+    age: i32,
+}
+    impl Student {
+        fn show_info(&self) {
+            println!("ชื่อ: {}", self.name);
+            println!("อายุ: {}", self.age);
+        }
+    }
 ```
 
 **Why?**
 
 `[อธิบายสาเหตุ]`
+self หมายถึง ข้อมูลของ Struct ตัวที่กำลังเรียก Method
+เมื่อเราเขียน:
+
+student.show_info();
+
+Rust จะส่ง student เข้ามาให้ Method ผ่าน self
+
+ดังนั้นถ้าต้องการใช้:
+
+self.name
+self.age
+
+เราต้องประกาศ:
+
+fn show_info(&self)
+
+&self หมายถึง Method สามารถ อ่านข้อมูลของ Struct ได้ โดยไม่ต้องเป็นเจ้าของข้อมูล
 
 ---
 
-### Mistake 2 — `[ชื่อข้อผิดพลาด]`
+### Mistake 2 — `[ลืม mut เมื่อ Method แก้ไขข้อมูล]`
 
 **Problem**
 
 `[อธิบายปัญหา]`
+สร้าง Method ที่ต้องการเปลี่ยนแปลงข้อมูลภายใน Struct แต่ไม่ได้ใช้ &mut self หรือไม่ได้ประกาศตัวแปรด้วย mut
 
 **Incorrect Code**
 
 ```rust
-// Incorrect example
+struct Student {
+    name: String,
+    age: i32,
+}
+impl Student {
+    fn birthday(&mut self) {
+        self.age += 1;
+    }
+}
+fn main() {
+    let student = Student { //ไม่มี mut บอกว่า Method นี้ต้องการแก้ไขข้อมูลของ student
+        name: "John".to_string(),
+        age: 20,
+    };
+student.birthday(); }
 ```
 
 **Correct Code**
 
 ```rust
-// Correct example
+struct Student {
+    name: String,
+    age: i32,
+}
+impl Student {
+    fn birthday(&mut self) {
+        self.age += 1;
+    }
+}
+fn main() {
+    let mut student = Student { //มี mut อนุญาตให้ student ถูกแก้ไข
+        name: "John".to_string(),
+        age: 20,
+    };
+student.birthday(); }
 ```
 
 **Why?**
 
 `[อธิบายสาเหตุ]`
+ถ้า Method ต้องการ แก้ไขข้อมูลของ Struct ต้องใช้ &mut self
 
+fn birthday(&mut self)
+
+และตัวแปรที่นำไปเรียก Method ก็ต้องประกาศด้วย mut
+
+let mut student = Student { ... };
+
+จำง่าย ๆ:
+
+อ่านข้อมูล
+&self
+
+แก้ไขข้อมูล
+&mut self
++
+mut ตัวแปร
 ---
 
 ## 8. Exercises
 
 > จัดทำแบบฝึกหัด **2 ข้อ** ที่สอดคล้องกับ Topic และมีระดับความยากเหมาะสม
 
-### Exercise 1 — `[ชื่อโจทย์]`
+### Exercise 1 — `[เก็บข้อมูลนักเรียน]`
 
 **Problem**
 
 `[เขียนโจทย์]`
+`[ให้สร้าง struct Student สำหรับเก็บข้อมูลนักเรียน โดยมีข้อมูลดังนี้
+
+    - ชื่อ (name) เป็น String
+    - อายุ (age) เป็น i32
+
+จากนั้นสร้าง Method ชื่อ show_info() เพื่อแสดงข้อมูลของนักเรียน]`
+
+ผลลัพธ์ที่ต้องการ:
+    ชื่อ: John
+    อายุ: 20
 
 **Hint**
 
 `[คำใบ้]`
+- ใช้ struct Student
+- สร้าง Method ภายใน impl Student
+- Method show_info() ให้ใช้ &self
+- ใน main() ให้สร้าง Student 1 คน แล้วเรียกใช้ show_info()
 
 **Solution**
 
 ```rust
-// Solution code
+struct Student {
+    name: String,
+    age: i32,
+}
+impl Student {
+    fn show_info(&self) {
+        println!("ชื่อ: {}", self.name);
+        println!("อายุ: {}", self.age);
+    }
+}
+fn main() {
+    let student = Student {
+        name: "John".to_string(),
+        age: 20,
+    };
+    student.show_info();
+}
 ```
 
 **Explanation**
 
 `[อธิบายแนวทางแก้]`
+สร้าง struct Student เพื่อเก็บข้อมูลของนักเรียน:
+
+struct Student {
+    name: String,
+    age: i32,
+}
+
+จากนั้นใช้ impl Student เพื่อสร้าง Method ให้กับ Student
+
+impl Student {
+    fn show_info(&self) {
+        // ...
+    }
+}
+
+&self ใช้สำหรับให้ Method เข้าถึงข้อมูลของ Student ตัวที่เรียก Method
+
+เช่น:
+
+self.name
+self.age
+
+ใน main() สร้าง Student:
+
+let student = Student {
+    name: String::from("John"),
+    age: 20,
+};
+
+แล้วเรียก Method:
+
+student.show_info();
 
 ---
 
-### Exercise 2 — `[ชื่อโจทย์]`
+### Exercise 2 — `[ข้อมูลหนังสือ]`
 
 **Problem**
 
 `[เขียนโจทย์]`
+ให้สร้าง struct Book สำหรับเก็บข้อมูลหนังสือ โดยมีข้อมูลดังนี้
+
+    title เป็น String
+    author เป็น String
+    price เป็น f64
+
+จากนั้นสร้าง Method ชื่อ show_info() เพื่อแสดงข้อมูลหนังสือ
+
+ผลลัพธ์ที่ต้องการ:
+
+ชื่อหนังสือ: Rust Programming
+ผู้เขียน: John
+ราคา: 599
 
 **Hint**
 
 `[คำใบ้]`
+- ใช้ struct Book
+- สร้าง Method ภายใน impl Book
+- Method show_info() ให้ใช้ &self
+- ใช้ println!() เพื่อแสดงข้อมูล
+- ใน main() ให้สร้างหนังสือ 1 เล่ม แล้วเรียก show_info()
 
 **Solution**
 
 ```rust
-// Solution code
+struct Book {
+    title: String,
+    author: String,
+    price: f64,
+    }
+impl Book {
+    fn show_info(&self) {
+        println!("ชื่อหนังสือ: {}", self.title);
+        println!("ผู้เขียน: {}", self.author);
+        println!("ราคา: {}", self.price);
+        }
+}
+fn main() {
+    let book = Book {
+        title: "Rust Programming".to_string(),
+        author: "John".to_string(),
+        price: 599.0,
+        };
+    book.show_info();
+}
 ```
 
 **Explanation**
 
 `[อธิบายแนวทางแก้]`
+สร้าง struct Book เพื่อเก็บข้อมูล 3 อย่าง:
 
+struct Book {
+    title: String,
+    author: String,
+    price: f64,
+}
+
+จากนั้นใช้ impl Book เพื่อสร้าง Method:
+
+impl Book {
+    fn show_info(&self) {
+        // ...
+    }
+}
+
+&self ทำให้ Method สามารถอ่านข้อมูลของ book ได้ เช่น:
+
+self.title
+self.author
+self.price
+
+ใน main() สร้างหนังสือ:
+
+let book = Book {
+    title: "Rust Programming".to_string(),
+    author: "John".to_string(),
+    price: 599.0,
+};
+
+แล้วเรียก Method:
+
+book.show_info();
+
+ผลลัพธ์:
+
+ชื่อหนังสือ: Rust Programming
+ผู้เขียน: John
+ราคา: 599
 ---
 
 ## 9. PPL Perspective

@@ -147,9 +147,9 @@ impl UserAccount {
     fn deposit(&mut self, amount: f64) {
         if amount > 0.0 {
             self.balance += amount;
-            println!("✅ ฝากเงินสำเร็จ: +${:.2} | ยอดคงเหลือปัจจุบัน: ${:.2}", amount, self.balance);
+            println!("ฝากเงินสำเร็จ: +${:.2} | ยอดคงเหลือปัจจุบัน: ${:.2}", amount, self.balance);
         } else {
-            println!("❌ จำนวนเงินฝากต้องมากกว่า 0");
+            println!("จำนวนเงินฝากต้องมากกว่า 0");
         }
     }
 
@@ -165,7 +165,7 @@ impl UserAccount {
     }
 
     fn close_account(self) -> f64 {
-        println!("🔒 ปิดบัญชีของ {} สำเร็จ คืนเงินคงเหลือ: ${:.2}", self.username, self.balance);
+        println!("ปิดบัญชีของ {} สำเร็จ คืนเงินคงเหลือ: ${:.2}", self.username, self.balance);
         self.balance
     }
 }
@@ -179,8 +179,8 @@ fn main() {
     my_account.deposit(50.0);
 
     match my_account.withdraw(30.0) {
-        Ok(new_balance) => println!("✅ ถอนเงินสำเร็จ ยอดคงเหลือ: ${:.2}", new_balance),
-        Err(e) => println!("❌ เกิดข้อผิดพลาด: {}", e),
+        Ok(new_balance) => println!("ถอนเงินสำเร็จ ยอดคงเหลือ: ${:.2}", new_balance),
+        Err(e) => println!("เกิดข้อผิดพลาด: {}", e),
     }
 
     let refunded = my_account.close_account();
@@ -193,9 +193,9 @@ fn main() {
 ```text
 เริ่มต้นบัญชี: UserAccount { username: "Alice", balance: 100.0, active: true }
 ยอดเงินเริ่มต้น: $100.00
-✅ ฝากเงินสำเร็จ: +$50.00 | ยอดคงเหลือปัจจุบัน: $150.00
-✅ ถอนเงินสำเร็จ ยอดคงเหลือ: $120.00
-🔒 ปิดบัญชีของ Alice สำเร็จ คืนเงินคงเหลือ: $120.00
+ฝากเงินสำเร็จ: +$50.00 | ยอดคงเหลือปัจจุบัน: $150.00
+ถอนเงินสำเร็จ ยอดคงเหลือ: $120.00
+ปิดบัญชีของ Alice สำเร็จ คืนเงินคงเหลือ: $120.00
 เงินคืนเข้ามือ: $120.00
 ```
 
@@ -211,25 +211,86 @@ fn main() {
 
 ---
 
-### Example 2 — `[ชื่อ Example]`
+### Example 2 — `[ชื่อ การคำนวณพื้นที่และการปรับขนาดรูปทรงสี่เหลี่ยม (Rectangle Structure)]`
 
-**Purpose:** `[ต้องการสาธิตอะไร]`
+**Purpose:** `[สาธิตการใช้ Struct เก็บขนาดวัตถุ, การสร้าง Associated Function (new), การใช้ Method คำนวณค่า (&self), การใช้ Method ปรับเปลี่ยนข้อมูลภายใน (&mut self), และการย้าย Ownership เพื่อคืนค่ากลับ (self)]`
 
 ```rust
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+impl Rectangle {
+    fn new(width: u32, height: u32) -> Self {
+        Self { width, height }
+    }
+
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+
+    fn scale(&mut self, factor: u32) {
+        self.width *= factor;
+        self.height *= factor;
+    }
+
+    fn square_up(self) -> Self {
+        let max_side = if self.width > self.height {
+            self.width
+        } else {
+            self.height
+        };
+        Self {
+            width: max_side,
+            height: max_side,
+        }
+    }
+}
+
 fn main() {
-    // Write your runnable Rust code here
+    let mut rect = Rectangle::new(10, 5);
+    println!("เริ่มต้นรูปทรง: {:?}", rect);
+
+    println!("พื้นที่รูปทรง: {} ตารางหน่วย", rect.area());
+
+    rect.scale(2);
+    println!("หลังขยายสเกล 2 เท่า: {:?}", rect);
+    println!("พื้นที่ใหม่: {} ตารางหน่วย", rect.area());
+
+    let square = rect.square_up();
+    println!("ปรับรูปทรงเป็นจัตุรัส: {:?}", square);
+    println!("พื้นที่จัตุรัส: {} ตารางหน่วย", square.area());
 }
 ```
 
 **Expected Output**
 
 ```text
-[expected output]
+เริ่มต้นรูปทรง: Rectangle { width: 10, height: 5 }
+พื้นที่รูปทรง: 50 ตารางหน่วย
+หลังขยายสเกล 2 เท่า: Rectangle { width: 20, height: 10 }
+พื้นที่ใหม่: 200 ตารางหน่วย
+ปรับรูปทรงเป็นจัตุรัส: Rectangle { width: 20, height: 20 }
+พื้นที่จัตุรัส: 400 ตารางหน่วย
 ```
 
 **Explanation**
 
-`[อธิบาย code]`
+- **`struct Rectangle`**: การนิยามโครงสร้างข้อมูลสำหรับเก็บขนาดสี่เหลี่ยม โดยมีฟิลด์ width และ height เป็นชนิดข้อมูล u32
+
+- **`#[derive(Debug)]`**: คำสั่งอนุญาตให้แสดงผลข้อมูลใน Struct ออกทางหน้าจอผ่านฟอร์แมต {:?} ได้
+
+- **`impl Rectangle`**: บล็อกสำหรับนิยามการทำงานทั้งหมดของ Struct
+
+- **`fn new(...)`**: เป็น Associated Function ทำหน้าที่เป็น Constructor สำหรับสร้าง Instance ใหม่
+
+- **`fn area(&self)`**: เป็น Immutable Method ดึงค่า width และ height จาก Instance มาคำนวณพื้นที่โดยไม่มีการแก้ไขข้อมูล
+
+- **`fn scale(&mut self, ...)`**: เป็น Mutable Method ทำการปรับเปลี่ยนค่าฟิลด์ภายใน Instance เดิมโดยการคูณขยายขนาด
+
+- **`fn square_up(self)`**: เป็น Ownership Consumer Method รับ self เพื่อทำลาย/แปลง Instance เดิม แล้วส่งคืน Instance ของสี่เหลี่ยมจัตุรัสรูปใหม่กลับไป
 
 ---
 
@@ -565,11 +626,153 @@ book.show_info();
 
 ### 9.3 Type System
 
-`[เกี่ยวข้องกับ type system อย่างไร ถ้ามี]`
+## 4 มิติหลักที่ Structs & Methods เกี่ยวข้องกับ Type System
+
+Structs & Methods ใน Rust ไม่ได้เป็นเพียงแค่โครงสร้างแบบ OOP ดั้งเดิม แต่ทำงานร่วมกับ Type System ในมิติหลัก ดังนี้:
+
+### 1. การเป็นรากฐานของ Product Type (Data Structuring)
+
+* **Product Type ($A \times B$):** ในทาง Algebraic Data Types (ADTs) ตัว `struct` ทำหน้าที่เป็น Product Type ที่เกิดจากการรวมเซตข้อมูลของแต่ละ Field เข้าด้วยกัน
+
+* **Nominal Typing:** Rust ใช้ระบบ Type แบบระบุชื่อ (Nominal Typing) ในการตรวจ Struct ซึ่งหมายความว่าแม้ Struct 2 ตัวจะมี Field เหมือนกันทุกประการ แต่ Type System จะถือว่าเป็น Type คนละตัวกัน เพื่อป้องกันความผิดพลาดเชิง Semantics
+
+* **Zero-Cost Abstraction:** Struct ใน Rust ทำหน้าที่เพียงกำหนด **Memory Layout** ณ เวลา Compile-time โดยค่าของ Field จะวางเรียงกันใน Memory โดยตรง ไม่มี Class Metadata หรือ Object Header เหมือนภาษาอย่าง Java หรือ Python
+
+### 2. การบังคับใช้กฎ Ownership & Borrowing ผ่าน Receiver (`self`)
+
+Rust แยก Data (`struct`) และ Behavior (`impl`) ออกจากกันอย่างเด็ดขาด โดย Method ไม่ใช่สิ่งพิเศษที่สิงอยู่ใน Object แต่มันคือ **Standalone Function** ที่รับ `self` เป็น Parameter ตัวแรก
+
+ชนิดของ `self` ใน Method Receiver เป็นตัวกำหนดสิทธิ์ใน **Affine Type System** ของ Rust ณ เวลา Compile-time:
+
+| การระบุ `self` ใน Method | ความหมายใน Type System | ผลลัพธ์ด้าน Memory & Safety |
+| :--- | :--- | :--- |
+| **`fn foo(self)`** | ย้าย **Ownership** (Move) | Struct ถูกทำลายหรือย้ายสิทธิ์ออกไป ตัวแปรเดิมใช้ต่อไม่ได้อีก |
+| **`fn foo(&self)`** | ยืมแบบ **Immutable Borrow** | อ่านข้อมูลได้หลายจุดพร้อมกัน (Aliasing) แต่ห้ามแก้ไข |
+| **`fn foo(&mut self)`** | ยืมแบบ **Mutable Borrow** | แก้ไขข้อมูลได้ แต่ต้องเป็น Unique Reference เท่านั้น (ห้ามมี Alias อื่น) |
+
+> **PL Insight:** Type Checker จะตรวจสอบสิทธิ์เหล่านี้ ณ เวลา Compile-time ทำให้การันตีเรื่อง **Data Race Freedom** และ **Memory Safety** โดยไม่ต้องใช้ Garbage Collector (GC)
+
+### 3. การเป็นตัวเชื่อม Ad-hoc Polymorphism (Traits)
+
+Rust ไม่ใช้ Inheritance (การสืบทอด Class) ในการทำ Polymorphism แต่ใช้ **Traits** (คล้ายกับ Typeclasses ใน Haskell) ซึ่งแยกการนิยามโครงสร้างข้อมูลกับพฤติกรรมออกจากกัน และควบคุม Dispatching ผ่าน Type System:
+
+* **Static Dispatch (Monomorphization):** เมื่อใช้ Generic Bounds (`T: Trait`) Type System จะสร้างโค้ดเจาะจงตาม Concrete Type ตอนคอมไพล์ ทำให้ไม่มี Runtime Cost
+
+* **Dynamic Dispatch (`dyn Trait`):** เมื่อต้องการ Dynamic Dispatch ณ เวลา Runtime ตัว Type System จะบังคับให้เปลี่ยน Representation ของ Struct เป็น **Fat Pointer** (Pointer ชี้ Data + Pointer ชี้ vtable) ชี้ให้เห็นขอบเขตเรื่อง Memory อย่างชัดเจน
+
+### 4. การรองรับ State Machine ณ ระดับ Type (Type-state Pattern)
+
+การใช้ Generic Struct ร่วมกับ Method ช่วยให้เราสร้าง **Deterministic Finite Automaton (DFA) ณ ระดับ Type System** ได้
+
+```rust
+struct Draft;
+struct Published;
+
+struct Post<State> {
+    state: State,
+    content: String,
+}
+
+impl Post<Draft> {
+    fn publish(self) -> Post<Published> {
+        Post {
+            state: Published,
+            content: self.content,
+        }
+    }
+}
+```
+
+* เราสามารถกำหนดให้ Method บางตัวเรียกได้เฉพาะตอนที่ Struct อยู่ใน Type-State ที่ถูกต้องเท่านั้น (เช่น `Post<Draft>` แปลงร่างเป็น `Post<Published>`)
+
+* หากพยายามเรียก Method ผิด State คอมไพเลอร์จะปฏิเสธและแจ้ง Error ทันที ป้องกัน Bug ทาง Logic ได้ตั้งแต่ยังไม่ทันรันโปรแกรม
+
+## ตารางเปรียบเทียบเชิง PL Theory
+
+| ประเด็น | ภาษา OOP ดั้งเดิม (เช่น Java/C++) | ภาษา Rust |
+| :--- | :--- | :--- |
+| **Data & Behavior** | ผูกติดกันใน Class เดียวกัน | แยก Struct (Data) และ `impl` (Behavior) ออกจากกัน |
+| **Abstraction Mechanism** | Inheritance / Subtyping | Composition + Traits (Ad-hoc Polymorphism) |
+| **Method Dispatch** | Dynamic Dispatch เป็นค่าเริ่มต้น (Virtual Tables) | Static Dispatch เป็นค่าเริ่มต้น (Monomorphization) |
+| **Safety Guarantees** | พึ่งพา Runtime checks / Garbage Collector | พึ่งพา Borrow Checker (Affine Type System) ณ Compile-time |
+
+## บทสรุป
+
+Structs & Methods ใน Rust **ไม่ได้เป็นแค่การเขียนโปรแกรมเชิงวัตถุ (OOP)** แต่เป็นการเอา **โครงสร้างข้อมูล (Product Type)** มาเรียงต่อกับ **กฎสิทธิ์การเข้าถึง memory (Self Borrowing)** และ **อินเทอร์เฟซ (Traits)** เพื่อให้ **Type Checker ตรวจสอบความปลอดภัยทั้งหมดได้จบตั้งแต่ตอน Compile-time**
 
 ### 9.4 Memory / Resource Management
 
-`[เกี่ยวข้องกับ memory หรือ resource management อย่างไร ถ้ามี]`
+
+## มุมมองทาง Programming Languages (PL) และ Memory / Resource Management
+
+## 1. การจัดวางข้อมูลในหน่วยความจำ (Memory Layout & Allocation)
+
+ในเชิงภาษาระบบ (Systems Programming Language) ตัว Struct ใน Rust เป็นรากฐานของการรวมกลุ่มข้อมูล (Data Aggregation) ซึ่งส่งผลต่อการบริหารจัดการ RAM โดยตรง:
+
+* **Value Semantics (Stack-First Allocation):**
+  * Struct ใน Rust เป็น **Value Type** โดยสมบูรณ์ ต่างจากภาษาอย่าง Java หรือ C# ที่ประเภท Class/Object จะถูกบังคับให้จองพื้นที่บน Heap เสมอ
+  * เมื่อประกาศ Struct ภายในฟังก์ชัน ข้อมูลทั้งหมดจะถูกจองบน **Stack** โดยตรง ทำให้เข้าถึงข้อมูลได้เร็วระดับ Machine Instruction และถูกป๊อป (Pop) ออกจาก Stack ทันทีที่จบ Scope โดยไม่มี Overhead ของ Garbage Collector (GC)
+  * หากต้องการเก็บไว้บน Heap จะต้องระบุผ่าน **Smart Pointers** อย่างชัดเจน เช่น `Box<T>`, `Rc<T>`, หรือ `Arc<T>`
+
+* **Field Reordering Optimization:**
+  * ภาษา C จะจัดวาง Field ในหน่วยความจำตามลำดับที่เขียน ทำให้อาจเกิดพื้นที่ว่างเปล่า (**Padding Space**) เพื่อให้ตรงกับ CPU Alignment
+  * คอมไพเลอร์ Rust (`rustc`) มีฟีเจอร์ **Dynamic Field Reordering** โดยจะสลับลำดับของ Field ใน Memory ให้อัตโนมัติเพื่อบีบอัด Padding ให้เหลือน้อยที่สุด ช่วยประหยัด RAM และเพิ่มอัตรา CPU Cache Hit Rate (เว้นแต่จะระบุ `#[repr(C)]` เพื่อบังคับแบบภาษา C)
+
+---
+
+## 2. พฤติกรรมของ Method Receiver (`self`) กับระบบ Ownership
+
+จุดเด่นสำคัญของ Rust คือการนำระบบ **Ownership** และ **Borrowing** มาผูกเข้ากับชนิดของ **Method Receiver (`self`)** ทำให้คอมไพเลอร์การันตีความปลอดภัยของ Memory ได้ตั้งแต่ช่วง Compile-Time:
+
+### A. `fn method(self)` — Move Semantics (Ownership Transfer)
+* **กลไก Memory:** เกิดการ **Move** สิทธิ์ความเป็นเจ้าของ (Ownership) เข้ามาใน Method
+* **การจัดการ Resource:** เมื่อ Method นี้ทำงานจบลง ขอบเขต (Scope) ของ `self` จะสิ้นสุดลง คอมไพเลอร์จะสั่งทำลายและคืน Memory/Resource ทันทีตามหลัก **RAII**
+* **PL Safety:** เหมาะกับคำสั่งเปลี่ยนสถานะหรือทำลาย Resource (เช่น `builder.build()` หรือ `socket.close()`) ซึ่งช่วยป้องกันปัญหา **Use-After-Free** หรือการนำออบเจกต์ที่ปิดไปแล้วมาเรียกใช้ซ้ำ เพราะคอมไพเลอร์จะไม่อนุญาตให้ใช้ตัวแปรเดิมอีกต่อไป
+
+### B. `fn method(&self)` — Shared Borrowing
+* **กลไก Memory:** ส่งเพียง Pointer (ขนาด 8 bytes บน 64-bit) ชี้ไปยัง Struct เดิมโดยไม่มีการ Copy ข้อมูลขนาดใหญ่
+* **PL Safety:** สามารถแชร์การอ่านข้อมูลได้หลายจุดพร้อมกัน แต่**ห้ามแก้ไขข้อมูล**โดยเด็ดขาด คอมไพเลอร์จะตรวจสอบ **Lifetime** เพื่อให้มั่นใจว่า Struct ต้นทางจะไม่ถูก Deallocate ไปก่อนที่ Method จะทำงานเสร็จ (ป้องกันปัญหา **Dangling Pointer**)
+
+### C. `fn method(&mut self)` — Exclusive Borrowing
+* **กลไก Memory:** ส่ง Pointer ไปยัง Struct เพื่อทำการแก้ไขข้อมูล
+* **PL Safety (Aliasing XOR Mutability):** การันตีว่าขณะที่ Method นี้ทำงาน จะ**ไม่มี Pointer อื่นใดชี้มายัง Struct นี้พร้อมกัน** ช่วยป้องกันปัญหา **Data Race** ในการทำงานแบบภาพขนาน (Concurrency) โดยไม่ต้องใช้ Lock/Mutex ในระดับชั้น Application
+
+---
+
+## 3. การคืน Resource แบบคาดเดาเวลาได้ (RAII & `Drop` Trait)
+
+ภาษา Rust ไม่ใช้ Garbage Collector (GC) แต่ใช้แนวคิด **RAII (Resource Acquisition Is Initialization)** ผ่านระบบ Trait:
+
+* **Automatic & Deterministic Cleanup:**
+  เมื่อ Struct หลุดออกนอก Scope คอมไพเลอร์จะแทรกการเรียกโค้ด `Drop::drop(&mut self)` ให้โดยอัตโนมัติ ณ ตำแหน่งนั้นทันที ทำให้คืน Heap Memory, File Descriptors, Database Connections หรือ Network Sockets ได้ตรงเวลา 100%
+* **Cascade Dropping:**
+  เมื่อ Struct ถูก Drop ตัว Field ย่อยๆ ทั้งหมดภายใน Struct จะถูกเรียก `Drop` เพื่อคืน Resource ต่อกันเป็นทอดๆ (Cascading Destruction) ช่วยป้องกันปัญหา Resource Leak
+
+---
+
+## 4. ประสิทธิภาพการเรียกใช้ Method (Method Dispatch)
+
+ภาษา Rust ยึดหลัก **Zero-Cost Abstraction** ในการเรียกใช้ Method:
+
+1. **Static Dispatch (Monomorphization - Default):**
+   * การเรียก Method ปกติบน Struct จะถูกแปลงเป็น **Direct Function Call** ในระดับ Machine Code / Assembly
+   * สามารถทำ **Inlining** (เอาโค้ดของ Method มาวางแทนคำสั่งเรียก) ได้ ทำให้ไร้ Overhead ด้านประสิทธิภาพอย่างสิ้นเชิง เท่ากับการเขียน C style Procedural
+2. **Dynamic Dispatch (`dyn Trait`):**
+   * หากต้องการทำ Polymorphism ภาษา Rust จะบังคับให้ใช้ Pointer ผ่าน **Fat Pointer** (Pointer ชี้ข้อมูล + Pointer ชี้ VTable)
+   * ทำให้ต้นทุนเชิงประสิทธิภาพและ Memory ของ VTable ถูกแยกแยะอย่างชัดเจนและควบคุมได้ในชั้น Type System
+
+---
+
+## สรุปเปรียบเทียบเชิงปฏิบัติการ (Summary Matrix)
+
+| ชนิดของ Receiver | พฤติกรรมด้าน Memory | ผลลัพธ์ต่อการจัดการ Resource |
+| :--- | :--- | :--- |
+| **`self` (Value)** | **Move:** ย้ายสิทธิ์ Ownership / เตรียม Deallocate | ทำลาย Resource ทันทีหลังจบ Method (ป้องกัน *Use-after-free*) |
+| **`&self` (Shared Ref)** | **Shared Borrow:** ส่ง Pointer อ่านอย่างเดียว | ไม่ Copy ข้อมูล ป้องกัน *Dangling Pointer* ด้วยระบบ Lifetime |
+| **`&mut self` (Exclusive Ref)** | **Exclusive Borrow:** ส่ง Pointer แก้ไขได้ | การันตีไร้ Aliasing ป้องกัน *Data Race* โดยไม่ต้องใช้ Lock |
+
+---
+
 
 ### 9.5 Abstraction / Other PPL Concepts
 

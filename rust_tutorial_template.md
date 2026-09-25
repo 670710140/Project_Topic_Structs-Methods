@@ -1,6 +1,6 @@
 # Rust Tutorial Project — Principles of Programming Languages
 
-> **สำหรับนักศึกษา:** ใช้ไฟล์นี้เป็น Template สำหรับจัดทำบทเรียน Rust ของกลุ่ม  
+> **สำหรับนักศึกษา:** ใช้ไฟล์นี้เป็น Template สำหรับจัดทำบทเรียน Rust ของกลุ่ม
 > **Topic No.:** `8`
 > **Topic Name:** `[Structs & Methods]`
 > **Group No.:** `8`
@@ -300,8 +300,7 @@ fn main() {
 
 **Problem**
 
-`[อธิบายปัญหา]`
-สร้าง Method ที่ต้องการเข้าถึงข้อมูลของ Struct แต่ไม่ได้ใส่ &self
+`[สร้าง Method ที่ต้องการเข้าถึงข้อมูลของ Struct แต่ไม่ได้ใส่ &self]`
 
 **Incorrect Code**
 
@@ -311,7 +310,7 @@ struct Student {
     age: i32,
 }
     impl Student {
-        fn show_info(!!!!) {
+        fn show_info() {
             println!("ชื่อ: {}", self.name);
             println!("อายุ: {}", self.age);
         }
@@ -335,33 +334,29 @@ struct Student {
 
 **Why?**
 
-`[อธิบายสาเหตุ]`
-self หมายถึง ข้อมูลของ Struct ตัวที่กำลังเรียก Method
-เมื่อเราเขียน:
+`[self หมายถึง ข้อมูลของ Struct ตัวที่กำลังเรียก Method เมื่อเราเขียน:`
 
-student.show_info();
+`student.show_info();`
 
-Rust จะส่ง student เข้ามาให้ Method ผ่าน self
+`Rust จะส่ง student เข้ามาให้ Method ผ่าน self`
 
-ดังนั้นถ้าต้องการใช้:
+`ดังนั้นถ้าต้องการใช้:`
 
-self.name
-self.age
+`self.name`
+`self.age`
 
-เราต้องประกาศ:
+`เราต้องประกาศ:`
 
-fn show_info(&self)
+`fn show_info(&self)`
 
-&self หมายถึง Method สามารถ อ่านข้อมูลของ Struct ได้ โดยไม่ต้องเป็นเจ้าของข้อมูล
-
+`&self หมายถึง Method สามารถ อ่านข้อมูลของ Struct ได้ โดยไม่ต้องเป็นเจ้าของข้อมูล]`
 ---
 
-### Mistake 2 — `[ลืม mut เมื่อ Method แก้ไขข้อมูล]`
+### Mistake 2 — `[ลืม mut เมื่อ Method ต้องการแก้ไขข้อมูล]`
 
 **Problem**
 
-`[อธิบายปัญหา]`
-สร้าง Method ที่ต้องการเปลี่ยนแปลงข้อมูลภายใน Struct แต่ไม่ได้ใช้ &mut self หรือไม่ได้ประกาศตัวแปรด้วย mut
+`[สร้าง Method ที่ต้องการเปลี่ยนแปลงข้อมูลภายใน Struct แต่ไม่ได้ใช้ &mut self หรือไม่ได้ประกาศตัวแปรด้วย mut]`
 
 **Incorrect Code**
 
@@ -376,11 +371,12 @@ impl Student {
     }
 }
 fn main() {
-    let student = Student { //ไม่มี mut บอกว่า Method นี้ต้องการแก้ไขข้อมูลของ student
+    let student = Student { // <-- ไม่มี mut บอกว่า Method นี้ต้องการแก้ไขข้อมูลของ student
         name: "John".to_string(),
         age: 20,
     };
 student.birthday(); }
+
 ```
 
 **Correct Code**
@@ -396,7 +392,7 @@ impl Student {
     }
 }
 fn main() {
-    let mut student = Student { //มี mut อนุญาตให้ student ถูกแก้ไข
+    let mut student = Student { //<-- มี mut อนุญาตให้ student ถูกแก้ไข
         name: "John".to_string(),
         age: 20,
     };
@@ -405,24 +401,20 @@ student.birthday(); }
 
 **Why?**
 
-`[อธิบายสาเหตุ]`
-ถ้า Method ต้องการ แก้ไขข้อมูลของ Struct ต้องใช้ &mut self
+`[ถ้า Method ต้องการ แก้ไขข้อมูลของ Struct ต้องใช้ &mut self`
 
-fn birthday(&mut self)
+`fn birthday(&mut self)`
 
-และตัวแปรที่นำไปเรียก Method ก็ต้องประกาศด้วย mut
+`และตัวแปรที่นำไปเรียก Method ก็ต้องประกาศด้วย mut`
 
-let mut student = Student { ... };
+`let mut student = Student { ... };`
 
-จำง่าย ๆ:
+`จำง่าย ๆ:`
 
-อ่านข้อมูล
-&self
+`อ่านข้อมูล ใช้ &self`
 
-แก้ไขข้อมูล
-&mut self
-+
-mut ตัวแปร
+`แก้ไขข้อมูล ใช้ &mut self หรือ mut ตัวแปร]`
+
 ---
 
 ## 8. Exercises
@@ -433,25 +425,25 @@ mut ตัวแปร
 
 **Problem**
 
-`[เขียนโจทย์]`
-`[ให้สร้าง struct Student สำหรับเก็บข้อมูลนักเรียน โดยมีข้อมูลดังนี้
+`[ให้สร้าง struct Student สำหรับเก็บข้อมูลนักเรียน โดยมีข้อมูลดังนี้`
 
-    - ชื่อ (name) เป็น String
-    - อายุ (age) เป็น i32
+`- ชื่อ (name) เป็น String`
+`- อายุ (age) เป็น i32`
 
-จากนั้นสร้าง Method ชื่อ show_info() เพื่อแสดงข้อมูลของนักเรียน]`
+`จากนั้นสร้าง Method ชื่อ show_info() เพื่อแสดงข้อมูลของนักเรียน`
 
-ผลลัพธ์ที่ต้องการ:
-    ชื่อ: John
-    อายุ: 20
+`ผลลัพธ์ที่ต้องการ:`
+    `ชื่อ: John`
+    `อายุ: 20]`
+
 
 **Hint**
 
-`[คำใบ้]`
-- ใช้ struct Student
-- สร้าง Method ภายใน impl Student
-- Method show_info() ให้ใช้ &self
-- ใน main() ให้สร้าง Student 1 คน แล้วเรียกใช้ show_info()
+`[- ใช้ struct Student`
+`- สร้าง Method ภายใน impl Student`
+`- Method show_info() ให้ใช้ &self`
+`- ใน main() ให้สร้าง Student 1 คน แล้วเรียกใช้ show_info()]`
+
 
 **Solution**
 
@@ -477,39 +469,39 @@ fn main() {
 
 **Explanation**
 
-`[อธิบายแนวทางแก้]`
-สร้าง struct Student เพื่อเก็บข้อมูลของนักเรียน:
+`[สร้าง struct Student เพื่อเก็บข้อมูลของนักเรียน:`
 
-struct Student {
-    name: String,
-    age: i32,
-}
+`struct Student {`
+    `name: String,`
+    `age: i32,`
+`}`
 
-จากนั้นใช้ impl Student เพื่อสร้าง Method ให้กับ Student
+`จากนั้นใช้ impl Student เพื่อสร้าง Method ให้กับ Student`
 
-impl Student {
-    fn show_info(&self) {
-        // ...
-    }
-}
+`impl Student {`
+    `fn show_info(&self) {`
+        `// ...`
+    `}`
+`}`
 
-&self ใช้สำหรับให้ Method เข้าถึงข้อมูลของ Student ตัวที่เรียก Method
+`&self ใช้สำหรับให้ Method เข้าถึงข้อมูลของ Student ตัวที่เรียก Method`
 
-เช่น:
+`เช่น:`
 
-self.name
-self.age
+`self.name`
+`self.age`
 
-ใน main() สร้าง Student:
+`ใน main() สร้าง Student:`
 
-let student = Student {
-    name: String::from("John"),
-    age: 20,
-};
+`let student = Student {`
+    `name: String::from("John"),`
+    `age: 20,`
+`};`
 
-แล้วเรียก Method:
+`แล้วเรียก Method:`
 
-student.show_info();
+`student.show_info();]`
+
 
 ---
 
@@ -517,29 +509,29 @@ student.show_info();
 
 **Problem**
 
-`[เขียนโจทย์]`
-ให้สร้าง struct Book สำหรับเก็บข้อมูลหนังสือ โดยมีข้อมูลดังนี้
+`[ให้สร้าง struct Book สำหรับเก็บข้อมูลหนังสือ โดยมีข้อมูลดังนี้`
 
-    title เป็น String
-    author เป็น String
-    price เป็น f64
+`title เป็น String`
+`author เป็น String`
+`price เป็น f64`
 
-จากนั้นสร้าง Method ชื่อ show_info() เพื่อแสดงข้อมูลหนังสือ
+`จากนั้นสร้าง Method ชื่อ show_info() เพื่อแสดงข้อมูลหนังสือ`
 
-ผลลัพธ์ที่ต้องการ:
+`ผลลัพธ์ที่ต้องการ:`
 
-ชื่อหนังสือ: Rust Programming
-ผู้เขียน: John
-ราคา: 599
+`ชื่อหนังสือ: Rust Programming`
+`ผู้เขียน: John`
+`ราคา: 599]`
+
 
 **Hint**
 
-`[คำใบ้]`
-- ใช้ struct Book
-- สร้าง Method ภายใน impl Book
-- Method show_info() ให้ใช้ &self
-- ใช้ println!() เพื่อแสดงข้อมูล
-- ใน main() ให้สร้างหนังสือ 1 เล่ม แล้วเรียก show_info()
+`[- ใช้ struct Book`
+`- สร้าง Method ภายใน impl Book`
+`- Method show_info() ให้ใช้ &self`
+`- ใช้ println!() เพื่อแสดงข้อมูล`
+`- ใน main() ให้สร้างหนังสือ 1 เล่ม แล้วเรียก show_info()]`
+
 
 **Solution**
 
@@ -568,46 +560,46 @@ fn main() {
 
 **Explanation**
 
-`[อธิบายแนวทางแก้]`
-สร้าง struct Book เพื่อเก็บข้อมูล 3 อย่าง:
+`[สร้าง struct Book เพื่อเก็บข้อมูล 3 อย่าง:`
 
-struct Book {
-    title: String,
-    author: String,
-    price: f64,
-}
+`struct Book {`
+    `title: String,`
+    `author: String,`
+    `price: f64,`
+`}`
 
-จากนั้นใช้ impl Book เพื่อสร้าง Method:
+`จากนั้นใช้ impl Book เพื่อสร้าง Method:`
 
-impl Book {
-    fn show_info(&self) {
-        // ...
-    }
-}
+`impl Book {`
+    `fn show_info(&self) {`
+        `// ...`
+    `}`
+`}`
 
-&self ทำให้ Method สามารถอ่านข้อมูลของ book ได้ เช่น:
+`&self ทำให้ Method สามารถอ่านข้อมูลของ book ได้ เช่น:`
 
-self.title
-self.author
-self.price
+`self.title`
+`self.author`
+`self.price`
 
-ใน main() สร้างหนังสือ:
+`ใน main() สร้างหนังสือ:`
 
-let book = Book {
-    title: "Rust Programming".to_string(),
-    author: "John".to_string(),
-    price: 599.0,
-};
+`let book = Book {`
+    `title: "Rust Programming".to_string(),`
+    `author: "John".to_string(),`
+    `price: 599.0,`
+`};`
 
-แล้วเรียก Method:
+`แล้วเรียก Method:`
 
-book.show_info();
+`book.show_info();`
 
-ผลลัพธ์:
+`ผลลัพธ์:`
 
-ชื่อหนังสือ: Rust Programming
-ผู้เขียน: John
-ราคา: 599
+`ชื่อหนังสือ: Rust Programming`
+`ผู้เขียน: John`
+`ราคา: 599]`
+
 ---
 
 ## 9. PPL Perspective
@@ -702,7 +694,6 @@ Structs & Methods ใน Rust **ไม่ได้เป็นแค่การ
 
 ### 9.4 Memory / Resource Management
 
-
 ## มุมมองทาง Programming Languages (PL) และ Memory / Resource Management
 
 ## 1. การจัดวางข้อมูลในหน่วยความจำ (Memory Layout & Allocation)
@@ -776,34 +767,34 @@ Structs & Methods ใน Rust **ไม่ได้เป็นแค่การ
 
 ### 9.5 Abstraction / Other PPL Concepts
 
-`[อธิบาย abstraction, scope, binding, paradigm หรือแนวคิด PPL อื่นที่เกี่ยวข้อง]`
+`[Rust มีแนวคิดทาง Programming Language ที่เกี่ยวข้องกับการใช้ Structs และ Methods ดังนี้`
 
-Rust มีแนวคิดทาง Programming Language ที่เกี่ยวข้องกับการใช้ Structs และ Methods ดังนี้
+`Abstraction: struct ใช้สำหรับรวมข้อมูลที่เกี่ยวข้องกันไว้เป็นกลุ่มเดียว และ methods ใช้สำหรับกำหนดการทำงานของข้อมูลนั้น ทำให้ผู้ใช้สามารถเรียกใช้งานผ่านชื่อ Method โดยไม่จำเป็นต้องรู้รายละเอียดภายในทั้งหมด`
 
-Abstraction: struct ใช้สำหรับรวมข้อมูลที่เกี่ยวข้องกันไว้เป็นกลุ่มเดียว และ methods ใช้สำหรับกำหนดการทำงานของข้อมูลนั้น ทำให้ผู้ใช้สามารถเรียกใช้งานผ่านชื่อ Method โดยไม่จำเป็นต้องรู้รายละเอียดภายในทั้งหมด
+`Scope: ตัวแปรและข้อมูลใน Rust จะสามารถใช้งานได้ภายใน Scope ที่กำหนด เช่น ตัวแปรที่ประกาศภายใน Function จะสามารถใช้งานได้เฉพาะภายใน Function นั้น`
 
-Scope: ตัวแปรและข้อมูลใน Rust จะสามารถใช้งานได้ภายใน Scope ที่กำหนด เช่น ตัวแปรที่ประกาศภายใน Function จะสามารถใช้งานได้เฉพาะภายใน Function นั้น
+`Binding: การประกาศตัวแปรใน Rust เป็นการสร้าง Binding ระหว่างชื่อกับค่าหรือข้อมูล เช่น let student = Student { ... } ซึ่งทำให้ชื่อ student อ้างอิงถึงข้อมูลของ Student`
 
-Binding: การประกาศตัวแปรใน Rust เป็นการสร้าง Binding ระหว่างชื่อกับค่าหรือข้อมูล เช่น let student = Student { ... } ซึ่งทำให้ชื่อ student อ้างอิงถึงข้อมูลของ Student
+`Encapsulation: ข้อมูลและการทำงานสามารถรวมอยู่ภายใน struct และ impl ทำให้โปรแกรมมีโครงสร้างและจัดการข้อมูลได้ง่ายขึ้น`
+`Procedural / Imperative Programming: Rust รองรับการเขียนโปรแกรมแบบลำดับขั้น โดยสามารถใช้ตัวแปร เงื่อนไข Loop และ Function เพื่อกำหนดลำดับการทำงานของโปรแกรม`
 
-Encapsulation: ข้อมูลและการทำงานสามารถรวมอยู่ภายใน struct และ impl ทำให้โปรแกรมมีโครงสร้างและจัดการข้อมูลได้ง่ายขึ้น
-Procedural / Imperative Programming: Rust รองรับการเขียนโปรแกรมแบบลำดับขั้น โดยสามารถใช้ตัวแปร เงื่อนไข Loop และ Function เพื่อกำหนดลำดับการทำงานของโปรแกรม
+`แนวคิดเหล่านี้ช่วยให้การเขียนโปรแกรมด้วย Rust มีโครงสร้างชัดเจน แยกข้อมูลและการทำงานเป็นส่วน ๆ และทำให้สามารถนำกลับมาใช้ซ้ำได้ง่าย]`
 
-แนวคิดเหล่านี้ช่วยให้การเขียนโปรแกรมด้วย Rust มีโครงสร้างชัดเจน แยกข้อมูลและการทำงานเป็นส่วน ๆ และทำให้สามารถนำกลับมาใช้ซ้ำได้ง่าย
+
 ---
 ### 9.6 Why Rust?
 
-`[Rust ใช้แนวคิดนี้เพื่อเพิ่ม safety, reliability หรือ performance อย่างไร]`
+`[Rust ใช้แนวคิดเรื่อง Safety, Reliability และ Performance เพื่อให้โปรแกรมทำงานได้อย่างปลอดภัยและมีประสิทธิภาพ`
 
-Rust ใช้แนวคิดเรื่อง Safety, Reliability และ Performance เพื่อให้โปรแกรมทำงานได้อย่างปลอดภัยและมีประสิทธิภาพ
+`Safety: Rust มีระบบตรวจสอบการจัดการหน่วยความจำ เช่น Ownership และ Borrowing ช่วยลดปัญหาที่อาจเกิดขึ้นจากการใช้หน่วยความจำผิดวิธี`
 
-Safety: Rust มีระบบตรวจสอบการจัดการหน่วยความจำ เช่น Ownership และ Borrowing ช่วยลดปัญหาที่อาจเกิดขึ้นจากการใช้หน่วยความจำผิดวิธี
+`Reliability: Rust ตรวจสอบข้อผิดพลาดหลายอย่างตั้งแต่ตอน Compile ทำให้ช่วยลดโอกาสเกิด Bug ขณะโปรแกรมทำงาน`
 
-Reliability: Rust ตรวจสอบข้อผิดพลาดหลายอย่างตั้งแต่ตอน Compile ทำให้ช่วยลดโอกาสเกิด Bug ขณะโปรแกรมทำงาน
+`Performance: Rust เป็นภาษาที่ Compile เป็น Machine Code ทำให้โปรแกรมทำงานได้รวดเร็วและใช้ทรัพยากรอย่างมีประสิทธิภาพ โดยไม่ต้องใช้ Garbage Collector`
 
-Performance: Rust เป็นภาษาที่ Compile เป็น Machine Code ทำให้โปรแกรมทำงานได้รวดเร็วและใช้ทรัพยากรอย่างมีประสิทธิภาพ โดยไม่ต้องใช้ Garbage Collector
+`ดังนั้น Rust จึงเหมาะสำหรับการพัฒนาโปรแกรมที่ต้องการทั้ง ความปลอดภัย ความน่าเชื่อถือ และประสิทธิภาพในการทำงาน]`
 
-ดังนั้น Rust จึงเหมาะสำหรับการพัฒนาโปรแกรมที่ต้องการทั้ง ความปลอดภัย ความน่าเชื่อถือ และประสิทธิภาพในการทำงาน
+
 ---
 
 ## 10. Rust vs. Other Language

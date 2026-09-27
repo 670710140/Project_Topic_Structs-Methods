@@ -11,7 +11,7 @@
 
 | #   | Name                    | Student ID    | GitHub Username | Main Responsibility          |
 | --- | ----------------------- | ------------- | --------------- | ---------------------------- |
-| 1   | `[นายพงศ์ชยุตม์ หัวใจเพ็ชร์]` | `[670710137]` | `@[username]`   | Concept + Code               |
+| 1   | `[นายพงศ์ชยุตม์ หัวใจเพ็ชร์]` | `[670710137]` | `@[670710137]`   | Concept + Code               |
 | 2   | `[นายพชรพล อาจม่วง]`     | `[670710138]` | `@[670710138]`  | Code + Demo                  |
 | 3   | `[นายพิชัยพร พลบเนียม]`    | `[670710139]` | `@[username]`   | Rust vs Other Language + PPL |
 | 4   | `[นายภัทรดนัย คนชม]`      | `[ุ670710140]` | `@[670710140]`  | Exercises + Common Mistakes  |
@@ -39,33 +39,70 @@
 
 ## 4. Key Concepts
 
-### 4.1 `[Concept 1]`
+### 4.1 `[Structs and Fields]`
 
-**คำอธิบาย**
-
-`[อธิบายแนวคิด]`
-
-**ตัวอย่าง**
+`[Struct คือ ประเภทของข้อมูลที่เราสามารถใช้เพื่อจัดกลุ่มของข้อมูลจำนวนหนึ่งที่เกี่ยวข้องกันมาจัดรูปเป็นformat โดยข้อมูลย่อยเหล่านั้นจะถูกเรียกว่า field ]`
 
 ```rust
-fn main() {
-    println!("Hello, Rust!");
+struct Book {
+    title: String,
+    author: String,
+    pages: u32,
+    is_available: bool,
 }
+
+fn main() {
+    let my_book = Book {
+        title: String::from("The Rust Programming Language"),
+        author: String::from("Steve Klabnik"),
+        pages: 552,
+        is_available: true,
+    };
+
+    println!("Book: {} by {}", my_book.title, my_book.author);
+    println!("Pages: {}, Available: {}", my_book.pages, my_book.is_available);
+}
+
 ```
 
-**Explanation**
-
-`[อธิบายว่า code ทำงานอย่างไร]`
+`[จากโค้ดด้านบนจะเห็นว่าเราสร้าง Book ที่มีชื่อ field และชนิดข้อมูลของมัน (u32 คือ Unsigned 32-bit Integer หรือก็คือจำนวนต็มบวกที่ไม่เกิน32bit) ต่อมาในส่วนของ main จะเป็นการกำหนดค่าลงใน struct ตามรูปแบบที่สร้างไว้ และสุดท้ายในส่วนของ println เป็นการ print ค่าออกมาทาง output โดยจะมี {} เป็นตัวกำหนดตำแหน่งแทนค่า]`
 
 ---
 
 ### 4.2 `[Concept 2]`
 
-`[อธิบายแนวคิด]`
+`[Modifying Structs]`
 
 ```rust
-// Rust code
+struct User {
+    username: String,
+    active: bool,
+    sign_in_count: u64,
+}
+
+fn build_user(username: String) -> User {
+    User {
+        username: username,
+        active: true,
+        sign_in_count: 1,
+    }
+}
+
+fn main() {
+    let mut user1 = build_user(String::from("rust_coder"));
+    user1.active = false;
+
+    let user2 = User {
+        username: String::from("new_user"),
+        ..user1 
+    };
+
+    println!("User2 active state: {}", user2.active);
+}
+
 ```
+
+`[ส่วนของ fn build_user เป็นการสร้าง function และ return ค่ากลับไปเป็น User หรือก็คือตัว struct ที่เราสร้างไว้ในตอนแรก ต่อมาในส่วนของ main ตัวคำว่า mut คือคำสั่ง Mutable ทำหน้าที่อนุญาติให้เราแก้ค่าที่ถูกตั้งไปแล้วใน struct ได้ ส่วน ..user1 เป็นคำสั่งที่บอกให้ field ส่วนที่เหลือที่เราไม่ได้กำหนดค่าให้ user2 ไปเอามาจาก user1 ได้เลย]`
 
 ---
 

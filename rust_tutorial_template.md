@@ -41,7 +41,7 @@
 
 ### 4.1 `[Structs and Fields]`
 
-`[Struct คือ ประเภทของข้อมูลที่เราสามารถใช้เพื่อจัดกลุ่มของข้อมูลจำนวนหนึ่งที่เกี่ยวข้องกันมาจัดรูปเป็นformat โดยข้อมูลย่อยเหล่านั้นจะถูกเรียกว่า field ]`
+`[Struct คือ ประเภทของข้อมูลที่เราสามารถใช้เพื่อจัดกลุ่มของข้อมูลจำนวนหนึ่งที่เกี่ยวข้องกันมาจัดรูปเป็นformat โดยข้อมูลย่อยเหล่านั้นจะถูกเรียกว่า field]`
 
 ```rust
 struct Book {
@@ -69,9 +69,9 @@ fn main() {
 
 ---
 
-### 4.2 `[Concept 2]`
+### 4.2 `[Modifying Structs]`
 
-`[Modifying Structs]`
+`[โดยปกติแล้ว structs ในภาษา Rust จะเปลี่ยนแปลงค่าภายใน fields ไม่ได้แต่ถ้าเราต้องการที่จะเปลี่ยนแปลงค่าตัวแปรนั้นๆต้องใช้คำสั่ง mut]`
 
 ```rust
 struct User {
@@ -106,33 +106,83 @@ fn main() {
 
 ---
 
-### 4.3 `[Concept 3]`
+### 4.3 `[Tuple Structs & Unit-Like Structs]`
 
-`[อธิบายแนวคิด]`
+`[Tuple Struct : มีแต่ขื่อชนิด struct ไม่มีชื่อของ fields || Unit-Like Struct : มีแต่ชื่อ struct ไม่มี fields]`
 
 ```rust
-// Rust code
+struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
+
+struct AlwaysEqual;
+
+fn main() {
+    let black = Color(0, 0, 0);
+    let origin = Point(0, 0, 0);
+
+    println!("Black RGB: ({}, {}, {})", black.0, black.1, black.2);
+
+    let _subject = AlwaysEqual;
+}
+
 ```
+
+`[ในส่วนแรก Color,Point คือการประกาศ struct แบบที่ไม่ได้กำหนดชื่อตัวแปรใน fields เรียกว่า Tuple Struct โดยจะมีแค่ชนิดตัวแปรแล้วเวลาจะเรียกใช้ก็ค่อยสร้างและใส่ค่่าลงไปทีเดียว ส่วนต่อมา AlwaysEqual เป็นการประกาศ struct ที่ไม่มี fields ใดๆเลยโดย struct รูปแบบนี้เรียกว่า Unit-Like Struct เอาไว้สร้าง type ขึ้นมาเพื่อนำไปสืบทอดหรือกำหนดกลุ่มชนิดข้อมูลบางอย่าง]`
 
 ---
 
-### 4.4 `[Concept 4 — ถ้ามี]`
+### 4.4 `[Methods and the self Parameter`
 
-`[อธิบายแนวคิด]`
+`[Methods คือ fnc ที่ถูกประกาศภายใต้เนื้อหาของ struct จะต่างจาก fnc ปกติ ตรงที่ต้องใช้ self มาเป็น parameter ตัวแรกในรูปแบบต่างๆเสมอ]`
 
 ```rust
-// Rust code
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+impl Rectangle {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+}
+
+fn main() {
+    let rect = Rectangle { width: 30, height: 50 };
+
+    println!("The area of the rectangle is {} square pixels.", rect.area());
+}
+
 ```
+
+`[impl Rectangle คือการ implements ในรูปของภาษา rust มีไว้สำหรับเขียน methods ส่วน self จะทำหน้าที่คล้ายๆ this ใน java แต่จะต่างกันตรงที่การใส่ & ด้านหน้า self เป็นการยืมมาเพียงค่าไม่ได้ยึด ownership มาด้วย]`
 
 ---
 
-### 4.5 `[Concept 5 — ถ้ามี]`
+### 4.5 `[Associated Functions]`
 
-`[อธิบายแนวคิด]`
+`[Associated Functions เป็น fnc ที่ถูกสร้างไว้ภายใต้ impl ที่ไม่มี parameter เป็น self เนื่องจากว่ามันไม่ได้เชื่อมโยงกับ object หรือ instance ตัวใดตัวหนึ่ง]`
 
 ```rust
-// Rust code
+struct Circle {
+    radius: f64,
+}
+
+impl Circle {
+    fn new(r: f64) -> Circle {
+        Circle { radius: r }
+    }
+}
+
+fn main() {
+    let my_circle = Circle::new(5.5);
+
+    println!("Created a circle with radius: {}", my_circle.radius);
+}
+
 ```
+
+`[ในส่วนของ fn new จะคล้ายๆกับการสร้าง constructor ใน java จะสักเกตุได้จากการที่ parameter ไม่มี self เป็นตัวบ่งบอกว่า fnc นี้เป็น Associated Functions ซึ่งจะไม่ได้ผูกกับ obj ไหนแต่จะผูกกับโครงสร้าง Circle แทน]`
 
 ---
 

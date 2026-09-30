@@ -13,7 +13,7 @@
 | --- | ----------------------- | ------------- | --------------- | ---------------------------- |
 | 1   | `[นายพงศ์ชยุตม์ หัวใจเพ็ชร์]` | `[670710137]` | `@[670710137]`   | Concept + Code               |
 | 2   | `[นายพชรพล อาจม่วง]`     | `[670710138]` | `@[670710138]`  | Code + Demo                  |
-| 3   | `[นายพิชัยพร พลบเนียม]`    | `[670710139]` | `@[username]`   | Rust vs Other Language + PPL |
+| 3   | `[นายพิชัยพร พลบเนียม]`    | `[670710139]` | `@[670710139]`   | Rust vs Other Language + PPL |
 | 4   | `[นายภัทรดนัย คนชม]`      | `[ุ670710140]` | `@[670710140]`  | Exercises + Common Mistakes  |
 
 ---
@@ -697,220 +697,422 @@ fn main() {
 
 ### 9.1 Syntax
 
-`[Topic นี้เกี่ยวข้องกับ syntax อย่างไร]`
+ในภาษา Rust ไวยากรณ์ของ **Structs & Methods** สะท้อนแนวคิด **Separation of Concerns (การแยกความรับผิดชอบ)** โดยแยกการนิยามโครงสร้างข้อมูลออกจากพฤติกรรมการทำงานอย่างเด็ดขาด:
 
-### 9.2 Semantics
-
-`[คำสั่ง/construct เหล่านี้มีความหมายหรือพฤติกรรมอย่างไร]`
-
-### 9.3 Type System
-
-## 4 มิติหลักที่ Structs & Methods เกี่ยวข้องกับ Type System
-
-Structs & Methods ใน Rust ไม่ได้เป็นเพียงแค่โครงสร้างแบบ OOP ดั้งเดิม แต่ทำงานร่วมกับ Type System ในมิติหลัก ดังนี้:
-
-### 1. การเป็นรากฐานของ Product Type (Data Structuring)
-
-* **Product Type ($A \times B$):** ในทาง Algebraic Data Types (ADTs) ตัว `struct` ทำหน้าที่เป็น Product Type ที่เกิดจากการรวมเซตข้อมูลของแต่ละ Field เข้าด้วยกัน
-
-* **Nominal Typing:** Rust ใช้ระบบ Type แบบระบุชื่อ (Nominal Typing) ในการตรวจ Struct ซึ่งหมายความว่าแม้ Struct 2 ตัวจะมี Field เหมือนกันทุกประการ แต่ Type System จะถือว่าเป็น Type คนละตัวกัน เพื่อป้องกันความผิดพลาดเชิง Semantics
-
-* **Zero-Cost Abstraction:** Struct ใน Rust ทำหน้าที่เพียงกำหนด **Memory Layout** ณ เวลา Compile-time โดยค่าของ Field จะวางเรียงกันใน Memory โดยตรง ไม่มี Class Metadata หรือ Object Header เหมือนภาษาอย่าง Java หรือ Python
-
-### 2. การบังคับใช้กฎ Ownership & Borrowing ผ่าน Receiver (`self`)
-
-Rust แยก Data (`struct`) และ Behavior (`impl`) ออกจากกันอย่างเด็ดขาด โดย Method ไม่ใช่สิ่งพิเศษที่สิงอยู่ใน Object แต่มันคือ **Standalone Function** ที่รับ `self` เป็น Parameter ตัวแรก
-
-ชนิดของ `self` ใน Method Receiver เป็นตัวกำหนดสิทธิ์ใน **Affine Type System** ของ Rust ณ เวลา Compile-time:
-
-| การระบุ `self` ใน Method | ความหมายใน Type System | ผลลัพธ์ด้าน Memory & Safety |
-| :--- | :--- | :--- |
-| **`fn foo(self)`** | ย้าย **Ownership** (Move) | Struct ถูกทำลายหรือย้ายสิทธิ์ออกไป ตัวแปรเดิมใช้ต่อไม่ได้อีก |
-| **`fn foo(&self)`** | ยืมแบบ **Immutable Borrow** | อ่านข้อมูลได้หลายจุดพร้อมกัน (Aliasing) แต่ห้ามแก้ไข |
-| **`fn foo(&mut self)`** | ยืมแบบ **Mutable Borrow** | แก้ไขข้อมูลได้ แต่ต้องเป็น Unique Reference เท่านั้น (ห้ามมี Alias อื่น) |
-
-> **PL Insight:** Type Checker จะตรวจสอบสิทธิ์เหล่านี้ ณ เวลา Compile-time ทำให้การันตีเรื่อง **Data Race Freedom** และ **Memory Safety** โดยไม่ต้องใช้ Garbage Collector (GC)
-
-### 3. การเป็นตัวเชื่อม Ad-hoc Polymorphism (Traits)
-
-Rust ไม่ใช้ Inheritance (การสืบทอด Class) ในการทำ Polymorphism แต่ใช้ **Traits** (คล้ายกับ Typeclasses ใน Haskell) ซึ่งแยกการนิยามโครงสร้างข้อมูลกับพฤติกรรมออกจากกัน และควบคุม Dispatching ผ่าน Type System:
-
-* **Static Dispatch (Monomorphization):** เมื่อใช้ Generic Bounds (`T: Trait`) Type System จะสร้างโค้ดเจาะจงตาม Concrete Type ตอนคอมไพล์ ทำให้ไม่มี Runtime Cost
-
-* **Dynamic Dispatch (`dyn Trait`):** เมื่อต้องการ Dynamic Dispatch ณ เวลา Runtime ตัว Type System จะบังคับให้เปลี่ยน Representation ของ Struct เป็น **Fat Pointer** (Pointer ชี้ Data + Pointer ชี้ vtable) ชี้ให้เห็นขอบเขตเรื่อง Memory อย่างชัดเจน
-
-### 4. การรองรับ State Machine ณ ระดับ Type (Type-state Pattern)
-
-การใช้ Generic Struct ร่วมกับ Method ช่วยให้เราสร้าง **Deterministic Finite Automaton (DFA) ณ ระดับ Type System** ได้
+1. **Separation of Definition and Implementation:**
+   * โครงสร้างข้อมูลถูกประกาศด้วยคีย์เวิร์ด `struct` ทำหน้าที่เป็นเพียงพิมพ์เขียวของหน่วยความจำ (Memory Layout)
+   * เมธอดและการทำงานทั้งหมดถูกแยกไปเขียนไว้ในบล็อก `impl` (Implementation) ต่างจากภาษา OOP ทั่วไป (เช่น Java, C++, Python) ที่รวมฟิลด์และเมธอดไว้ในบล็อกคลาสเดียวกัน
+2. **Explicit Receiver Parameter:**
+   * ไวยากรณ์ของ Rust บังคับให้เมธอดต้องประกาศพารามิเตอร์ตัวแรกเป็น `&self`, `&mut self`, หรือ `self` อย่างชัดเจน เพื่อบอกสิทธิ์การเข้าถึงหน่วยความจำ
+   * หากไม่มี `self` ในพารามิเตอร์ตัวแรก จะถือว่าเป็น **Associated Function** (ทำงานเหมือน Static Method หรือ Constructor) และเรียกใช้งานผ่านโอเปอเรเตอร์ Scope Resolution (`::`)
 
 ```rust
-struct Draft;
-struct Published;
-
-struct Post<State> {
-    state: State,
-    content: String,
+// นิยามเฉพาะโครงสร้างข้อมูล (Data Abstraction)
+struct UserAccount {
+    username: String,
+    balance: f64,
 }
 
-impl Post<Draft> {
-    fn publish(self) -> Post<Published> {
-        Post {
-            state: Published,
-            content: self.content,
+// นิยามพฤติกรรมและการทำงาน (Behavior Implementation)
+impl UserAccount {
+    // 1. Associated Function (Constructor): ไม่มี self เรียกด้วย UserAccount::new(...)
+    fn new(username: &str, initial_balance: f64) -> Self {
+        Self {
+            username: username.to_string(),
+            balance: initial_balance,
         }
+    }
+
+    // 2. Method ที่มี Explicit Receiver (&self): ขอยืมอ่านข้อมูล
+    fn get_balance(&self) -> f64 {
+        self.balance
     }
 }
 ```
 
-* เราสามารถกำหนดให้ Method บางตัวเรียกได้เฉพาะตอนที่ Struct อยู่ใน Type-State ที่ถูกต้องเท่านั้น (เช่น `Post<Draft>` แปลงร่างเป็น `Post<Published>`)
+### 9.2 Semantics
 
-* หากพยายามเรียก Method ผิด State คอมไพเลอร์จะปฏิเสธและแจ้ง Error ทันที ป้องกัน Bug ทาง Logic ได้ตั้งแต่ยังไม่ทันรันโปรแกรม
+ความหมายเชิงพฤติกรรม (Semantics) ของการเรียกใช้เมธอดใน Rust ถูกผูกมัดเข้ากับระบบ **Ownership & Borrowing** โดยตรงผ่านชนิดของ Receiver (`self`):
 
-## ตารางเปรียบเทียบเชิง PL Theory
+1. **Borrowing Semantics (`&self` และ `&mut self`):**
+   * **`&self` (Shared Borrow):** เมธอดมีพฤติกรรมขอ **ยืมอ่านข้อมูล** ได้พร้อมกันหลายจุด (Aliasing) โดยห้ามแก้ไขค่าฟิลด์ใดๆ ภายใน Struct การันตีความปลอดภัยในการเข้าถึงพร้อมกัน
+   * **`&mut self` (Exclusive Borrow):** เมธอดมีพฤติกรรมขอ **ยืมแก้ไขข้อมูล** โดยคอมไพเลอร์จะบังคับกฎ *Aliasing XOR Mutability* ว่าขณะเรียกเมธอดนี้ จะต้องไม่มีพอยน์เตอร์หรือการอ้างอิงอื่นชี้มาที่ Struct นี้พร้อมกันเด็ดขาด จึงช่วยป้องกันปัญหา Data Race ใน Safe Rust
+2. **Move Semantics (`self` - Consuming Method):**
+   * **`self` (Ownership Transfer):** เมื่อเมธอดรับ `self` ตรงๆ จะเกิดการโอนย้ายกรรมสิทธิ์ (Move) เข้ามาในเมธอด และเมื่อเมธอดทำงานเสร็จสิ้น อินสแตนซ์เดิมจะถูกทำลายคืนทรัพยากรทันทีตามหลัก RAII ทำให้ตัวแปรต้นทางไม่สามารถถูกนำมาเรียกใช้ซ้ำได้อีก (เช่น เมธอด `close_account(self)`) ช่วยสร้าง State Machine ที่ป้องกัน Use-After-Free ได้ในระดับภาษา
+3. **Syntactic Sugar (Automatic Referencing and Dereferencing):**
+   * ในการเรียกใช้งาน เช่น `account.deposit(50.0)` ภาษา Rust มีกลไก Dot Operator Dereferencing ช่วยแปลงเป็น `UserAccount::deposit(&mut account, 50.0)` ให้อัตโนมัติ โปรแกรมเมอร์จึงไม่ต้องเขียนเครื่องหมาย `&` หรือ `*` ด้วยตนเองเหมือนในภาษา C/C++
 
-| ประเด็น | ภาษา OOP ดั้งเดิม (เช่น Java/C++) | ภาษา Rust |
-| :--- | :--- | :--- |
-| **Data & Behavior** | ผูกติดกันใน Class เดียวกัน | แยก Struct (Data) และ `impl` (Behavior) ออกจากกัน |
-| **Abstraction Mechanism** | Inheritance / Subtyping | Composition + Traits (Ad-hoc Polymorphism) |
-| **Method Dispatch** | Dynamic Dispatch เป็นค่าเริ่มต้น (Virtual Tables) | Static Dispatch เป็นค่าเริ่มต้น (Monomorphization) |
-| **Safety Guarantees** | พึ่งพา Runtime checks / Garbage Collector | พึ่งพา Borrow Checker (Affine Type System) ณ Compile-time |
 
-## บทสรุป
+### 9.3 Type System
 
-Structs & Methods ใน Rust **ไม่ได้เป็นแค่การเขียนโปรแกรมเชิงวัตถุ (OOP)** แต่เป็นการเอา **โครงสร้างข้อมูล (Product Type)** มาเรียงต่อกับ **กฎสิทธิ์การเข้าถึง memory (Self Borrowing)** และ **อินเทอร์เฟซ (Traits)** เพื่อให้ **Type Checker ตรวจสอบความปลอดภัยทั้งหมดได้จบตั้งแต่ตอน Compile-time**
+ในมิติของ **ระบบชนิดข้อมูล (Type System)** โครงสร้าง Structs & Methods ใน Rust มีคุณลักษณะเชิงทฤษฎีที่สำคัญ 4 ประการ:
+
+1. **Nominal Typing (ระบบชนิดข้อมูลแบบระบุชื่อ):**
+   * Rust ใช้ระบบ **Nominal Typing** ในการตรวจสอบความถูกต้องของ Structs ไม่ใช่ Structural Typing
+   * ตัวอย่างเช่น หากเรานิยาม `struct UserAccount { username: String, balance: f64 }` และ `struct CompanyAccount { username: String, balance: f64 }` แม้ทั้งสองจะมีฟิลด์ชนิดเดียวกันและลำดับเดียวกันเป๊ะ แต่ Type System จะถือว่าเป็นคนละชนิดข้อมูลกันโดยสิ้นเชิง ไม่สามารถนำมาใช้งานแทนกันหรือกำหนดค่าข้ามกันได้ ช่วยป้องกันข้อผิดพลาดเชิงความหมาย (Semantic Errors) ตั้งแต่ขั้นตอน Compile-time
+2. **Product Type ใน Algebraic Data Types (ADTs):**
+   * ในทางทฤษฎีภาษาโปรแกรม Struct ทำหน้าที่เป็น **Product Type ($A \times B$)** ซึ่งหมายความว่าเซตของสถานะที่เป็นไปได้ของ Struct เกิดจากผลคูณคาร์ทีเซียน (Cartesian Product) ของโดเมนข้อมูลของฟิลด์ทั้งหมดรวมกัน (เช่น ใน `UserAccount` คือ โดเมนของ `username` $\times$ โดเมนของ `balance`)
+   * แตกต่างจาก `enum` ของ Rust ที่ทำหน้าที่เป็น **Sum Type ($A + B$)** ที่เก็บค่าได้เพียงตัวเลือกใดตัวเลือกหนึ่ง ณ ขณะหนึ่ง
+3. **Affine Type System (การบังคับใช้ Ownership ผ่าน Receiver Types):**
+   * ระบบ Type ของ Rust ทำงานบนพื้นฐานของ **Affine Substructural Type System** ซึ่งกำหนดว่าค่าของข้อมูลสามารถถูกใช้งานได้ *อย่างมากที่สุดหนึ่งครั้ง (at most once)*
+   * ชนิดของพารามิเตอร์ `self` ในบล็อก `impl` ทำหน้าที่เป็นตัวบังคับใช้กฎนี้:
+     * หากเมธอดรับ `self` (Move): Type System จะเปลี่ยนสถานะของตัวแปรต้นทางเป็น "ถูกใช้งานแล้ว (Moved)" และบล็อกไม่ให้โค้ดส่วนอื่นนำตัวแปรเดิมมาอ้างอิงซ้ำ
+     * หากเมธอดรับ `&self` หรือ `&mut self` (Borrow): Type System จะตรวจสอบ Lifetime ให้การยืมคืนเสร็จสิ้นก่อนที่เจ้าของเดิมจะหมดอายุ
+   * ทำให้การันตีเรื่อง **Memory Safety** และ **Data-Race Freedom** ได้อย่างเบ็ดเสร็จผ่าน Type Checker โดยไม่ต้องพึ่งพา Runtime Garbage Collector
+4. **Traits & Ad-hoc Polymorphism (แทนที่ Class Inheritance):**
+   * Rust ไม่สนับสนุนการสืบทอดคลาส (Subtyping Inheritance) แต่ใช้ระบบ **Traits** (เทียบเคียงได้กับ Typeclasses ในภาษาเชิงฟังก์ชัน) เพื่อกำหนดและแชร์พฤติกรรมร่วม
+   * **Static Dispatch (Monomorphization):** เมื่อเขียนฟังก์ชันหรือเมธอดที่ใช้ Generic Bound เช่น `fn print_account<T: Summary>(acc: &T)` คอมไพเลอร์จะสร้างสำเนาโค้ดเฉพาะสำหรับแต่ละชนิดข้อมูลขึ้นมาตอนคอมไพล์ ทำให้เรียกใช้ได้เร็วเทียบเท่าฟังก์ชันตรงๆ โดยไร้ Overhead
+   * **Dynamic Dispatch (`dyn Trait`):** หากต้องการ Polymorphism แบบพลวัตตอนรันไทม์ Rust จะบังคับให้ใช้ผ่าน **Fat Pointer** (พอยน์เตอร์ชี้ข้อมูล 8 ไบต์ + พอยน์เตอร์ชี้ VTable 8 ไบต์) ทำให้เห็นต้นทุนหน่วยความจำอย่างโปร่งใสในระดับ Type System
+
+---
 
 ### 9.4 Memory / Resource Management
 
-## มุมมองทาง Programming Languages (PL) และ Memory / Resource Management
+ในเชิงภาษาระบบ (Systems Programming Language) โครงสร้าง Structs & Methods ของ Rust มีบทบาทสำคัญในการบริหารจัดการหน่วยความจำและทรัพยากรของเครื่อง ดังนี้:
 
-## 1. การจัดวางข้อมูลในหน่วยความจำ (Memory Layout & Allocation)
-
-ในเชิงภาษาระบบ (Systems Programming Language) ตัว Struct ใน Rust เป็นรากฐานของการรวมกลุ่มข้อมูล (Data Aggregation) ซึ่งส่งผลต่อการบริหารจัดการ RAM โดยตรง:
-
-* **Value Semantics (Stack-First Allocation):**
-  * Struct ใน Rust เป็น **Value Type** โดยสมบูรณ์ ต่างจากภาษาอย่าง Java หรือ C# ที่ประเภท Class/Object จะถูกบังคับให้จองพื้นที่บน Heap เสมอ
-  * เมื่อประกาศ Struct ภายในฟังก์ชัน ข้อมูลทั้งหมดจะถูกจองบน **Stack** โดยตรง ทำให้เข้าถึงข้อมูลได้เร็วระดับ Machine Instruction และถูกป๊อป (Pop) ออกจาก Stack ทันทีที่จบ Scope โดยไม่มี Overhead ของ Garbage Collector (GC)
-  * หากต้องการเก็บไว้บน Heap จะต้องระบุผ่าน **Smart Pointers** อย่างชัดเจน เช่น `Box<T>`, `Rc<T>`, หรือ `Arc<T>`
-
-* **Field Reordering Optimization:**
-  * ภาษา C จะจัดวาง Field ในหน่วยความจำตามลำดับที่เขียน ทำให้อาจเกิดพื้นที่ว่างเปล่า (**Padding Space**) เพื่อให้ตรงกับ CPU Alignment
-  * คอมไพเลอร์ Rust (`rustc`) มีฟีเจอร์ **Dynamic Field Reordering** โดยจะสลับลำดับของ Field ใน Memory ให้อัตโนมัติเพื่อบีบอัด Padding ให้เหลือน้อยที่สุด ช่วยประหยัด RAM และเพิ่มอัตรา CPU Cache Hit Rate (เว้นแต่จะระบุ `#[repr(C)]` เพื่อบังคับแบบภาษา C)
-
----
-
-## 2. พฤติกรรมของ Method Receiver (`self`) กับระบบ Ownership
-
-จุดเด่นสำคัญของ Rust คือการนำระบบ **Ownership** และ **Borrowing** มาผูกเข้ากับชนิดของ **Method Receiver (`self`)** ทำให้คอมไพเลอร์การันตีความปลอดภัยของ Memory ได้ตั้งแต่ช่วง Compile-Time:
-
-### A. `fn method(self)` — Move Semantics (Ownership Transfer)
-* **กลไก Memory:** เกิดการ **Move** สิทธิ์ความเป็นเจ้าของ (Ownership) เข้ามาใน Method
-* **การจัดการ Resource:** เมื่อ Method นี้ทำงานจบลง ขอบเขต (Scope) ของ `self` จะสิ้นสุดลง คอมไพเลอร์จะสั่งทำลายและคืน Memory/Resource ทันทีตามหลัก **RAII**
-* **PL Safety:** เหมาะกับคำสั่งเปลี่ยนสถานะหรือทำลาย Resource (เช่น `builder.build()` หรือ `socket.close()`) ซึ่งช่วยป้องกันปัญหา **Use-After-Free** หรือการนำออบเจกต์ที่ปิดไปแล้วมาเรียกใช้ซ้ำ เพราะคอมไพเลอร์จะไม่อนุญาตให้ใช้ตัวแปรเดิมอีกต่อไป
-
-### B. `fn method(&self)` — Shared Borrowing
-* **กลไก Memory:** ส่งเพียง Pointer (ขนาด 8 bytes บน 64-bit) ชี้ไปยัง Struct เดิมโดยไม่มีการ Copy ข้อมูลขนาดใหญ่
-* **PL Safety:** สามารถแชร์การอ่านข้อมูลได้หลายจุดพร้อมกัน แต่**ห้ามแก้ไขข้อมูล**โดยเด็ดขาด คอมไพเลอร์จะตรวจสอบ **Lifetime** เพื่อให้มั่นใจว่า Struct ต้นทางจะไม่ถูก Deallocate ไปก่อนที่ Method จะทำงานเสร็จ (ป้องกันปัญหา **Dangling Pointer**)
-
-### C. `fn method(&mut self)` — Exclusive Borrowing
-* **กลไก Memory:** ส่ง Pointer ไปยัง Struct เพื่อทำการแก้ไขข้อมูล
-* **PL Safety (Aliasing XOR Mutability):** การันตีว่าขณะที่ Method นี้ทำงาน จะ**ไม่มี Pointer อื่นใดชี้มายัง Struct นี้พร้อมกัน** ช่วยป้องกันปัญหา **Data Race** ในการทำงานแบบภาพขนาน (Concurrency) โดยไม่ต้องใช้ Lock/Mutex ในระดับชั้น Application
-
----
-
-## 3. การคืน Resource แบบคาดเดาเวลาได้ (RAII & `Drop` Trait)
-
-ภาษา Rust ไม่ใช้ Garbage Collector (GC) แต่ใช้แนวคิด **RAII (Resource Acquisition Is Initialization)** ผ่านระบบ Trait:
-
-* **Automatic & Deterministic Cleanup:**
-  เมื่อ Struct หลุดออกนอก Scope คอมไพเลอร์จะแทรกการเรียกโค้ด `Drop::drop(&mut self)` ให้โดยอัตโนมัติ ณ ตำแหน่งนั้นทันที ทำให้คืน Heap Memory, File Descriptors, Database Connections หรือ Network Sockets ได้ตรงเวลา 100%
-* **Cascade Dropping:**
-  เมื่อ Struct ถูก Drop ตัว Field ย่อยๆ ทั้งหมดภายใน Struct จะถูกเรียก `Drop` เพื่อคืน Resource ต่อกันเป็นทอดๆ (Cascading Destruction) ช่วยป้องกันปัญหา Resource Leak
-
----
-
-## 4. ประสิทธิภาพการเรียกใช้ Method (Method Dispatch)
-
-ภาษา Rust ยึดหลัก **Zero-Cost Abstraction** ในการเรียกใช้ Method:
-
-1. **Static Dispatch (Monomorphization - Default):**
-   * การเรียก Method ปกติบน Struct จะถูกแปลงเป็น **Direct Function Call** ในระดับ Machine Code / Assembly
-   * สามารถทำ **Inlining** (เอาโค้ดของ Method มาวางแทนคำสั่งเรียก) ได้ ทำให้ไร้ Overhead ด้านประสิทธิภาพอย่างสิ้นเชิง เท่ากับการเขียน C style Procedural
-2. **Dynamic Dispatch (`dyn Trait`):**
-   * หากต้องการทำ Polymorphism ภาษา Rust จะบังคับให้ใช้ Pointer ผ่าน **Fat Pointer** (Pointer ชี้ข้อมูล + Pointer ชี้ VTable)
-   * ทำให้ต้นทุนเชิงประสิทธิภาพและ Memory ของ VTable ถูกแยกแยะอย่างชัดเจนและควบคุมได้ในชั้น Type System
-
----
-
-## สรุปเปรียบเทียบเชิงปฏิบัติการ (Summary Matrix)
-
-| ชนิดของ Receiver | พฤติกรรมด้าน Memory | ผลลัพธ์ต่อการจัดการ Resource |
-| :--- | :--- | :--- |
-| **`self` (Value)** | **Move:** ย้ายสิทธิ์ Ownership / เตรียม Deallocate | ทำลาย Resource ทันทีหลังจบ Method (ป้องกัน *Use-after-free*) |
-| **`&self` (Shared Ref)** | **Shared Borrow:** ส่ง Pointer อ่านอย่างเดียว | ไม่ Copy ข้อมูล ป้องกัน *Dangling Pointer* ด้วยระบบ Lifetime |
-| **`&mut self` (Exclusive Ref)** | **Exclusive Borrow:** ส่ง Pointer แก้ไขได้ | การันตีไร้ Aliasing ป้องกัน *Data Race* โดยไม่ต้องใช้ Lock |
+1. **Stack-First Allocation (Value Semantics):**
+   * Struct ในภาษา Rust มีคุณสมบัติเป็น **Value Type** เมื่อประกาศตัวแปร เช่น `let my_account = UserAccount::new("Alice", 100.0);` ตัวอินสแตนซ์ของ Struct จะถูกจัดสรรพื้นที่บน **Stack** เป็นค่าเริ่มต้นโดยตรง (เว้นแต่จะระบุให้จัดเก็บบน Heap ผ่าน Smart Pointer เช่น `Box<T>`)
+   * ทำให้เข้าถึงข้อมูลได้เร็วระดับคำสั่งฮาร์ดแวร์ (CPU Register/Cache) และข้อมูลจะถูกนำออกจาก Stack ทันทีที่จบขอบเขตฟังก์ชันโดยไม่มีภาระการกวาดหน่วยความจำ แตกต่างจากภาษา OOP อย่าง Java หรือ Python ที่โดยทั่วไปอ็อบเจกต์จะถูกจัดสรรบน **Heap Memory** (Reference Semantics)
+2. **Zero Object Header Overhead:**
+   * อ็อบเจกต์ในภาษา Java มีข้อมูลแฝงที่เรียกว่า Object Header (ขนาดประมาณ 12–16 ไบต์) สำหรับเก็บคลาสพอยน์เตอร์และข้อมูลการล็อก ซึ่งกินพื้นที่หน่วยความจำมากกว่าข้อมูลจริง
+   * ในทางตรงกันข้าม Struct ของ Rust มีคุณสมบัติ **Zero-Metadata Overhead** คือไม่มี Object Header หรือข้อมูลเสริมแอบแฝง ขนาดของ `UserAccount` ในหน่วยความจำจึงมีค่าเท่ากับผลรวมของขนาดฟิลด์จริงเพียวๆ (String ขนาด 24 ไบต์ + f64 ขนาด 8 ไบต์ = 32 ไบต์บนระบบ 64-bit) เทียบเท่ากับ Struct ในภาษา C
+3. **Field Alignment & Dynamic Reordering:**
+   * สถาปัตยกรรม CPU กำหนดให้ข้อมูลต้องวางเรียงตรงตามแนวความกว้างของคำสั่ง (Memory Alignment) ซึ่งในภาษา C หากประกาศฟิลด์สลับไปมาจะเกิดช่องว่างที่สูญเปล่า (**Padding Space**)
+   * แต่คอมไพเลอร์ Rust (`rustc`) มีกลไก **Dynamic Field Reordering** คอยจัดเรียงลำดับฟิลด์ภายในหน่วยความจำใหม่ให้อัตโนมัติ เพื่อบีบอัด Padding ให้เหลือศูนย์หรือน้อยที่สุด ช่วยประหยัดพื้นที่ RAM และเพิ่มอัตรา Cache Hit ใน CPU
+4. **Deterministic Destruction ผ่าน RAII (`Drop` Trait):**
+   * ภาษา Rust ปฏิเสธการใช้ Garbage Collector (GC) แต่ใช้ปรัชญา **RAII (Resource Acquisition Is Initialization)** ควบคู่กับ Trait ชื่อ `Drop`
+   * เมื่อ Struct หลุดออกนอกขอบเขตการทำงาน (Scope) คอมไพเลอร์จะแทรกคำสั่งเรียก `Drop::drop(&mut self)` เพื่อคืนทรัพยากรและหน่วยความจำของฟิลด์ทั้งหมดโดยอัตโนมัติ และมี Lifetime ที่คาดเดาได้อย่างแม่นยำ (Deterministic Lifetime) ผ่านกลไก RAII
+5. **Method Dispatch Efficiency (ประสิทธิภาพการเรียกใช้เมธอด):**
+   * การเรียกเมธอดบน Struct เช่น `my_account.get_balance()` มีรูปแบบเป็น **Direct Function Call** ในระดับ Machine Code เสมือนการเรียกฟังก์ชันธรรมดา
+   * รองรับการทำ **Inlining** (นำโค้ดในเมธอดมาแทรกแทนจุดที่เรียกใช้งาน) ทำให้ไม่มีต้นทุนการกระโดดข้ามฟังก์ชัน และไม่มีความหน่วงของตาราง Virtual Method Table (VTable) จึงบรรลุเป้าหมายหลักการ **Zero-Cost Abstraction** อย่างสมบูรณ์
 
 ---
 
 
 ### 9.5 Abstraction / Other PPL Concepts
 
-`[Rust มีแนวคิดทาง Programming Language ที่เกี่ยวข้องกับการใช้ Structs และ Methods ดังนี้`
+โครงสร้าง **Structs & Methods** ในภาษา Rust เชื่อมโยงกับมิติเชิงกระบวนทัศน์และทฤษฎีภาษาโปรแกรม ดังนี้:
 
-`Abstraction: struct ใช้สำหรับรวมข้อมูลที่เกี่ยวข้องกันไว้เป็นกลุ่มเดียว และ methods ใช้สำหรับกำหนดการทำงานของข้อมูลนั้น ทำให้ผู้ใช้สามารถเรียกใช้งานผ่านชื่อ Method โดยไม่จำเป็นต้องรู้รายละเอียดภายในทั้งหมด`
-
-`Scope: ตัวแปรและข้อมูลใน Rust จะสามารถใช้งานได้ภายใน Scope ที่กำหนด เช่น ตัวแปรที่ประกาศภายใน Function จะสามารถใช้งานได้เฉพาะภายใน Function นั้น`
-
-`Binding: การประกาศตัวแปรใน Rust เป็นการสร้าง Binding ระหว่างชื่อกับค่าหรือข้อมูล เช่น let student = Student { ... } ซึ่งทำให้ชื่อ student อ้างอิงถึงข้อมูลของ Student`
-
-`Encapsulation: ข้อมูลและการทำงานสามารถรวมอยู่ภายใน struct และ impl ทำให้โปรแกรมมีโครงสร้างและจัดการข้อมูลได้ง่ายขึ้น`
-`Procedural / Imperative Programming: Rust รองรับการเขียนโปรแกรมแบบลำดับขั้น โดยสามารถใช้ตัวแปร เงื่อนไข Loop และ Function เพื่อกำหนดลำดับการทำงานของโปรแกรม`
-
-`แนวคิดเหล่านี้ช่วยให้การเขียนโปรแกรมด้วย Rust มีโครงสร้างชัดเจน แยกข้อมูลและการทำงานเป็นส่วน ๆ และทำให้สามารถนำกลับมาใช้ซ้ำได้ง่าย]`
-
+1. **Data Abstraction & Encapsulation:**
+   * **Data Abstraction:** ตัว `struct` ทำหน้าที่เป็น Abstract Data Type (ADT) ที่รวบรวมกลุ่มข้อมูลที่สัมพันธ์กันไว้เป็นหน่วยเดียว
+   * **Information Hiding:** Rust ไม่ใช้คีย์เวิร์ด Access Modifier ระดับคลาสอย่าง `private`/`protected` แบบ Java/C++ แต่ใช้ระบบ **Module-level Encapsulation** โดยฟิลด์และเมธอดจะเป็น private ตามค่าเริ่มต้น (เข้าถึงได้เฉพาะในโมดูลเดียวกัน) และต้องระบุคีย์เวิร์ด `pub` อย่างชัดเจนหากต้องการเปิดให้ภายนอกเข้าถึง ช่วยลดการรั่วไหลของ Implementation Details
+2. **Composition over Inheritance:**
+   * ในการออกแบบภาษา OOP ดั้งเดิม การขยายความสามารถมักพึ่งพา **Class Inheritance** ซึ่งนำไปสู่ปัญหาคลาสฐานเปราะบาง (*Fragile Base Class Problem*) และปัญหาเพชรมรณะ (*Diamond Problem*) จากการสืบทอดหลายสาย
+   * Rust เลือกตัดระบบ Inheritance ทิ้งไปโดยสิ้นเชิง และใช้หลักการ **Composition over Inheritance** โดยนำ Struct ย่อยมารวมกัน (Composition) และใช้ **Traits** เพื่อแชร์พฤติกรรมร่วม ทำให้ระบบมีความยืดหยุ่นสูงและปลอดภัยกว่า
+3. **Data-Driven Design (Multi-paradigm Programming):**
+   * การแยกข้อมูล (`struct`) ออกจากพฤติกรรม (`impl`) ทำให้สถาปัตยกรรมของโปรแกรมโน้มเอียงไปทาง **Data-Oriented Design** ซึ่งข้อมูลถูกจัดเรียงเป็นก้อนที่ต่อเนื่องกันในหน่วยความจำ เป็นมิตรกับ CPU Cache และสามารถผสมผสานกระบวนทัศน์แบบ Functional Programming (เช่น Method Chaining, Iterator, Closure) เข้ากับ Imperative Programming ได้อย่างลงตัว
+4. **Zero-Cost Abstraction:**
+   * การห่อหุ้มตรรกะไว้ใน Struct และ Method ไม่ก่อให้เกิดต้นทุนด้านความเร็วหรือหน่วยความจำในตอนทำงาน (No Runtime Cost) เนื่องจากคอมไพเลอร์ LLVM จะทำการ Optimize และ Inlining เมธอดส่วนใหญ่ให้กลายเป็น Machine Instructions เสมือนเขียนฟังก์ชันระดับภาษา C ตรงๆ
 
 ---
+
 ### 9.6 Why Rust?
 
-`[Rust ใช้แนวคิดเรื่อง Safety, Reliability และ Performance เพื่อให้โปรแกรมทำงานได้อย่างปลอดภัยและมีประสิทธิภาพ`
+ทำไมภาษา Rust จึงเลือกออกแบบระบบ Structs & Methods ในรูปแบบนี้ แทนที่จะใช้ Class เหมือนภาษา OOP กระแสหลักทั่วไป? คำตอบเชื่อมโยงกับเกณฑ์การประเมินภาษาโปรแกรม (Language Evaluation Criteria) ดังนี้:
 
-`Safety: Rust มีระบบตรวจสอบการจัดการหน่วยความจำ เช่น Ownership และ Borrowing ช่วยลดปัญหาที่อาจเกิดขึ้นจากการใช้หน่วยความจำผิดวิธี`
-
-`Reliability: Rust ตรวจสอบข้อผิดพลาดหลายอย่างตั้งแต่ตอน Compile ทำให้ช่วยลดโอกาสเกิด Bug ขณะโปรแกรมทำงาน`
-
-`Performance: Rust เป็นภาษาที่ Compile เป็น Machine Code ทำให้โปรแกรมทำงานได้รวดเร็วและใช้ทรัพยากรอย่างมีประสิทธิภาพ โดยไม่ต้องใช้ Garbage Collector`
-
-`ดังนั้น Rust จึงเหมาะสำหรับการพัฒนาโปรแกรมที่ต้องการทั้ง ความปลอดภัย ความน่าเชื่อถือ และประสิทธิภาพในการทำงาน]`
+1. **Maximum Reliability (ความน่าเชื่อถือและความปลอดภัยสูงสุด):**
+   * กำจัดปัญหาหลักของภาษา C/C++ เช่น **Dangling Pointer**, **Double Free**, และ **Data Race** โดยการตรวจเช็กสิทธิ์ผ่าน Borrow Checker ตั้งแต่ Compile-time
+   * กำจัดปัญหา **Null Pointer Exception** ของ Java โดยไม่มีค่า `null` ในระดับภาษา หากค่าอาจไม่มีอยู่จะถูกบังคับให้ใช้ `Option<T>` ร่วมกับ Struct แทน
+2. **Predictable Bare-metal Performance (ประสิทธิภาพระดับฮาร์ดแวร์):**
+   * ไม่มีระบบ **Garbage Collector (GC)** มาคอยหยุดการทำงานของโปรแกรมแบบสุ่ม (No Stop-the-world Latency)
+   * ข้อมูลใน Struct วางบน Stack เป็นค่าเริ่มต้น และขนาดในหน่วยความจำมีขนาดเท่ากับผลรวมของข้อมูลจริงเพียวๆ (Zero Object Header Overhead) ไม่เปลือง RAM และเข้าถึงได้รวดเร็ว
+3. **High Readability & Maintainability (ความอ่านง่ายและง่ายต่อการดูแลรักษา):**
+   * การบังคับระบุ Receiver (`&self`, `&mut self`, `self`) ทำให้ผู้อ่านโค้ดเข้าใจเจตนาของฟังก์ชันได้ทันทีว่าเมธอดนี้จะ "แค่อ่าน", "ขอแก้", หรือ "กลืนทำลาย" ข้อมูล โดยไม่ต้องเปิดเข้าไปดูโค้ดข้างในฟังก์ชัน
 
 
 ---
 
 ## 10. Rust vs. Other Language
 
-**Comparison Language:** `[Python / C / C++ / Java / Kotlin / ...]`
+**Comparison Languages:** **C++, Java, Python** (เปรียบเทียบการจัดการโครงสร้างข้อมูล พฤติกรรมเมธอด และการบริหารหน่วยความจำกับ Rust)
 
-| Aspect               | Rust      | Other Language |
-| -------------------- | --------- | -------------- |
-| Syntax               | `[อธิบาย]` | `[อธิบาย]`      |
-| Semantics / Behavior | `[อธิบาย]` | `[อธิบาย]`      |
-| Type System          | `[อธิบาย]` | `[อธิบาย]`      |
-| Memory Management    | `[อธิบาย]` | `[อธิบาย]`      |
-| Safety               | `[อธิบาย]` | `[อธิบาย]`      |
+| มิติ (Aspect) | ภาษา Rust (`struct` + `impl`) | ภาษา C++ (`class` / `struct`) | ภาษา Java (`class`) | ภาษา Python (`class`) |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Syntax & Declaration** | แยกนิยาม Data (`struct`) ออกจาก Behavior (`impl`) อย่างเด็ดขาด ไม่มีคลาส | สามารถรวม Data และ Method ใน struct/class ก้อนเดียวกัน | ทุกอย่างต้องรวมอยู่ใน `class` ไม่มีอิสระ | รวมข้อมูลและเมธอดไว้ใน `class` นิยามฟิลด์ใน `__init__` |
+| **2. Semantics & Receiver** | Receiver ชัดเจน (`&self`, `&mut self`, `self`) ระบุสิทธิ์ Borrow/Move ชัดแจ้ง | ใช้ `this` เป็น pointer และใช้คีย์เวิร์ด `const` แยกเมธอดอ่าน | ใช้ `this` เป็น reference ทุกเมธอดสามารถแก้ไขสถานะอ็อบเจกต์ได้ | ใช้ `self` เป็นพารามิเตอร์ตัวแรก เพื่ออ้าง Object ปัจจุบัน |
+| **3. Type System** | Static Typing, Nominal Typing, **ไม่มี Inheritance** (ใช้ Trait + Composition) | Static Typing, Nominal Typing, Multiple Inheritance, Virtual Function | Static Typing, Nominal Typing, Single Inheritance มี Object เป็น Root | Dynamic Typing, Duck Typing, Multiple Inheritance ตรวจสอบไทป์ตอน Runtime |
+| **4. Memory Management** | Stack เป็นค่าเริ่มต้น, คืน Memory อัตโนมัติด้วย Ownership + Borrowing + Scope ไร้ GC | Stack / Heap + RAII + new/delete หรือ Smart Pointer เสี่ยง Dangling Pointer | ทุกอ็อบเจกต์จองบน Heap ผ่าน `new`, พึ่งพา Garbage Collector | ทุกอ็อบเจกต์จองบน Heap, พึ่งพา Reference Counting และ Cyclic GC |
+| **5. Safety & Guarantees** | Compile-time Safety ผ่าน Ownership & Borrowing (ป้องกัน Null Pointer และ Data Race) | ยืดหยุ่นสูง แต่โปรแกรมเมอร์ต้องคุมเอง เสี่ยง Dangling Pointer และ Undefined Behavior | GC ช่วย Memory Safety แต่ยังอาจเกิด `NullPointerException` ตอน Runtime | จัดการ Memory อัตโนมัติ แต่เสี่ยงเกิด `AttributeError` / `TypeError` ตอน Runtime |
+
+---
 
 ### Rust Example
 
 ```rust
-// Rust code
+#[derive(Debug)]
+struct UserAccount {
+    username: String,
+    balance: f64,
+}
+
+impl UserAccount {
+    fn new(username: &str, initial_balance: f64) -> Self {
+        Self {
+            username: username.to_string(),
+            balance: initial_balance,
+        }
+    }
+
+    fn get_balance(&self) -> f64 {
+        self.balance
+    }
+
+    fn deposit(&mut self, amount: f64) {
+        if amount > 0.0 {
+            self.balance += amount;
+            println!("ฝากเงินสำเร็จ: +${:.2} | ยอดคงเหลือปัจจุบัน: ${:.2}", amount, self.balance);
+        } else {
+            println!("จำนวนเงินฝากต้องมากกว่า 0");
+        }
+    }
+
+    fn withdraw(&mut self, amount: f64) -> Result<f64, String> {
+        if amount <= 0.0 {
+            Err("จำนวนเงินถอนต้องมากกว่า 0".to_string())
+        } else if amount > self.balance {
+            Err("ยอดเงินคงเหลือไม่เพียงพอ".to_string())
+        } else {
+            self.balance -= amount;
+            Ok(self.balance)
+        }
+    }
+
+    // Consuming method: รับกรรมสิทธิ์ self (Move) ทำให้ account เดิมถูกทำลาย ป้องกันการใช้งานซ้ำ
+    fn close_account(self) -> f64 {
+        println!("ปิดบัญชีของ {} สำเร็จ คืนเงินคงเหลือ: ${:.2}", self.username, self.balance);
+        self.balance
+    }
+}
+
+fn main() {
+    let mut my_account = UserAccount::new("Alice", 100.0);
+    println!("เริ่มต้นบัญชี: {:?}", my_account);
+    println!("ยอดเงินเริ่มต้น: ${:.2}", my_account.get_balance());
+
+    my_account.deposit(50.0);
+
+    match my_account.withdraw(30.0) {
+        Ok(new_balance) => println!("ถอนเงินสำเร็จ ยอดคงเหลือ: ${:.2}", new_balance),
+        Err(e) => println!("เกิดข้อผิดพลาด: {}", e),
+    }
+
+    let refunded = my_account.close_account();
+    println!("เงินคืนเข้ามือ: ${:.2}", refunded);
+    // my_account.deposit(10.0); // ❌ คอมไพล์ไม่ผ่านทันที! (use of moved value: `my_account`)
+}
 ```
 
-### `[Other Language]` Example
+---
+
+### C++ Example
+
+```cpp
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+struct Result {
+    bool is_ok;
+    double value;
+    std::string error;
+
+    static Result Ok(double val) { return {true, val, ""}; }
+    static Result Err(const std::string& err) { return {false, 0.0, err}; }
+};
+
+class UserAccount {
+private:
+    std::string username;
+    double balance;
+
+public:
+    UserAccount(const std::string& username, double initial_balance)
+        : username(username), balance(initial_balance) {}
+
+    double get_balance() const { // const method บ่งบอกการยืมอ่าน
+        return balance;
+    }
+
+    void deposit(double amount) {
+        if (amount > 0.0) {
+            balance += amount;
+            std::cout << "ฝากเงินสำเร็จ: +$" << std::fixed << std::setprecision(2) << amount
+                      << " | ยอดคงเหลือปัจจุบัน: $" << balance << "\n";
+        } else {
+            std::cout << "จำนวนเงินฝากต้องมากกว่า 0\n";
+        }
+    }
+
+    Result withdraw(double amount) {
+        if (amount <= 0.0) {
+            return Result::Err("จำนวนเงินถอนต้องมากกว่า 0");
+        } else if (amount > balance) {
+            return Result::Err("ยอดเงินคงเหลือไม่เพียงพอ");
+        } else {
+            balance -= amount;
+            return Result::Ok(balance);
+        }
+    }
+
+    double close_account() {
+        std::cout << "ปิดบัญชีของ " << username << " สำเร็จ คืนเงินคงเหลือ: $" 
+                  << std::fixed << std::setprecision(2) << balance << "\n";
+        double refunded = balance;
+        balance = 0.0;
+        return refunded;
+    }
+};
+
+int main() {
+    UserAccount my_account("Alice", 100.0);
+    std::cout << "ยอดเงินเริ่มต้น: $" << std::fixed << std::setprecision(2) << my_account.get_balance() << "\n";
+    my_account.deposit(50.0);
+
+    Result res = my_account.withdraw(30.0);
+    if (res.is_ok) {
+        std::cout << "ถอนเงินสำเร็จ ยอดคงเหลือ: $" << std::fixed << std::setprecision(2) << res.value << "\n";
+    }
+
+    double refunded = my_account.close_account();
+    std::cout << "เงินคืนเข้ามือ: $" << std::fixed << std::setprecision(2) << refunded << "\n";
+    // my_account ยังคงอยู่และเรียกต่อได้ C++ คอมไพเลอร์ไม่ได้ห้าม ต้องเขียน logic ตรวจเช็กเอง
+}
+```
+
+---
+
+### Java Example
+
+```java
+public class UserAccount {
+    private String username;
+    private double balance;
+
+    public UserAccount(String username, double initialBalance) {
+        this.username = username;
+        this.balance = initialBalance;
+    }
+
+    public double getBalance() {
+        return this.balance;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0.0) {
+            this.balance += amount;
+            System.out.printf("ฝากเงินสำเร็จ: +$%.2f | ยอดคงเหลือปัจจุบัน: $%.2f%n", amount, this.balance);
+        } else {
+            System.out.println("จำนวนเงินฝากต้องมากกว่า 0");
+        }
+    }
+
+    public double withdraw(double amount) throws Exception {
+        if (amount <= 0.0) {
+            throw new Exception("จำนวนเงินถอนต้องมากกว่า 0");
+        } else if (amount > this.balance) {
+            throw new Exception("ยอดเงินคงเหลือไม่เพียงพอ");
+        } else {
+            this.balance -= amount;
+            return this.balance;
+        }
+    }
+
+    public double closeAccount() {
+        System.out.printf("ปิดบัญชีของ %s สำเร็จ คืนเงินคงเหลือ: $%.2f%n", this.username, this.balance);
+        double refunded = this.balance;
+        this.balance = 0.0;
+        return refunded;
+    }
+
+    public static void main(String[] args) {
+        UserAccount myAccount = new UserAccount("Alice", 100.0);
+        System.out.printf("ยอดเงินเริ่มต้น: $%.2f%n", myAccount.getBalance());
+        myAccount.deposit(50.0);
+
+        try {
+            double newBalance = myAccount.withdraw(30.0);
+            System.out.printf("ถอนเงินสำเร็จ ยอดคงเหลือ: $%.2f%n", newBalance);
+        } catch (Exception e) {
+            System.out.println("เกิดข้อผิดพลาด: " + e.getMessage());
+        }
+
+        double refunded = myAccount.closeAccount();
+        System.out.printf("เงินคืนเข้ามือ: $%.2f%n", refunded);
+        // อ็อบเจกต์ myAccount ยังลอยอยู่ใน Heap รอ Garbage Collector มาเก็บกวาด
+    }
+}
+```
+
+---
+
+### Python Example
 
 ```python
-# Other language code
+class UserAccount:
+    def __init__(self, username: str, initial_balance: float):
+        self.username = username
+        self.balance = initial_balance
+
+    def get_balance(self) -> float:
+        return self.balance
+
+    def deposit(self, amount: float) -> None:
+        if amount > 0.0:
+            self.balance += amount
+            print(f"ฝากเงินสำเร็จ: +${amount:.2f} | ยอดคงเหลือปัจจุบัน: ${self.balance:.2f}")
+        else:
+            print("จำนวนเงินฝากต้องมากกว่า 0")
+
+    def withdraw(self, amount: float):
+        if amount <= 0.0:
+            return (False, "จำนวนเงินถอนต้องมากกว่า 0")
+        elif amount > self.balance:
+            return (False, "ยอดเงินคงเหลือไม่เพียงพอ")
+        else:
+            self.balance -= amount
+            return (True, self.balance)
+
+    def close_account(self) -> float:
+        print(f"ปิดบัญชีของ {self.username} สำเร็จ คืนเงินคงเหลือ: ${self.balance:.2f}")
+        refunded = self.balance
+        self.balance = 0.0
+        return refunded
+
+
+def main():
+    my_account = UserAccount("Alice", 100.0)
+    print(f"ยอดเงินเริ่มต้น: ${my_account.get_balance():.2f}")
+    my_account.deposit(50.0)
+
+    is_ok, result = my_account.withdraw(30.0)
+    if is_ok:
+        print(f"ถอนเงินสำเร็จ ยอดคงเหลือ: ${result:.2f}")
+    else:
+        print(f"เกิดข้อผิดพลาด: {result}")
+
+    refunded = my_account.close_account()
+    print(f"เงินคืนเข้ามือ: ${refunded:.2f}")
 ```
 
-### Analysis
+---
 
-`[อธิบายความแตกต่างที่สำคัญ และเหตุผลด้านการออกแบบภาษา]`
+### Analysis (บทวิเคราะห์เชิงเปรียบเทียบหลักการภาษา)
+
+จากการเปรียบเทียบการทำงานของ `UserAccount` ระหว่าง **Rust**, **C++**, **Java**, และ **Python** พบความแตกต่างเชิงหลักการภาษา (PPL Perspectives) ดังนี้:
+
+1. **Encapsulation & Separation of Concerns:**
+   * **C++, Java, Python** จัดวาง Data และ Behavior รวมไว้เป็นก้อนเดียวกันใน `class` ซึ่งส่งผลให้เกิดความผูกพันแน่นหนาระหว่างโครงสร้างหน่วยความจำกับตรรกะของฟังก์ชัน
+   * **Rust** แยก `struct` (ที่เก็บเฉพาะ Data Layout) ออกจาก `impl` (Behavior) ทำให้สามารถขยายฟังก์ชันการทำงานหรือเพิ่ม Trait ได้เรื่อยๆ โดยไม่ต้องแตะต้องโครงร่างข้อมูลเดิม
+2. **Semantics ของ Receiver และ Mutability Control:**
+   * ใน **Java และ C++** มีตัวแปรแฝงคือ `this` ซึ่งใน Java อ็อบเจกต์จะถูกแก้ไขสถานะได้เสมอหากเข้าถึงได้ ส่วน C++ ใช้คีย์เวิร์ด `const` ท้ายเมธอดเพื่อป้องกันการแก้ไข
+   * ใน **Python** ใช้ `self` เป็นพารามิเตอร์ตัวแรก แต่ไม่มีการควบคุม Mutability ทำให้ฟิลด์ใดๆ ถูกแก้ไขหรือเพิ่มฟิลด์ใหม่แบบไดนามิกได้ตลอดเวลา ซึ่งลด Reliability ของระบบ
+   * ใน **Rust** บังคับระบุ Receiver อย่างชัดเจน: `&self` อนุญาตให้อ่านเท่านั้น, `&mut self` บังคับความเป็นเจ้าของแต่เพียงผู้เดียวเพื่อป้องกัน Data Race และที่โดดเด่นที่สุดคือ `self` (Consuming Method) ที่รับสิทธิ์ความเป็นเจ้าของ (Move) ทำให้เมื่อเรียก `my_account.close_account()` แล้ว อ็อบเจกต์จะถูกทำลายทิ้งทันที คอมไพเลอร์จะบล็อกไม่ให้ใครนำบัญชีที่ปิดไปแล้วมาฝาก-ถอนได้อีก ช่วยแก้ปัญหา Bug เชิงตรรกะได้ตั้งแต่ตอนคอมไพล์
+3. **Memory Lifecycle & Overhead:**
+   * **Java และ Python** จัดสรรอ็อบเจกต์ส่วนใหญ่บน **Heap Memory** ในลักษณะ Reference Type และมี **Object Header Overhead** (กินพื้นที่หน่วยความจำมากกว่าข้อมูลจริงเพื่อเก็บ Metadata ของคลาส) พร้อมทั้งต้องพึ่งพา **Garbage Collector** ในการคืนเมมโมรี
+   * **C++ และ Rust** จัดเก็บข้อมูลอินสแตนซ์บน **Stack** เป็นค่าเริ่มต้น (Zero Object Header Overhead) และมีขนาดในหน่วยความจำเท่ากับผลรวมของข้อมูลจริงเพียวๆ (String pointer + length + capacity + f64) และใช้หลักการ **RAII** คืนหน่วยความจำทันทีที่หลุดขอบเขต โดย Rust แตกต่างตรงที่มี Borrow Checker ช่วยตรวจสอบการอ้างอิงและ Ownership ตั้งแต่ Compile-time คอยป้องกันไม่ให้เกิด Dangling Pointer
+4. **Error Handling Paradigm:**
+   * **Java** ใช้ Exception (`try-catch`) ซึ่งเป็น Unchecked/Checked Exception ที่สร้าง Runtime Stack Trace Overhead สูง
+   * **Rust** ใช้ Monadic Error Handling ผ่าน `Result<T, E>` บังคับให้จัดการข้อผิดพลาดด้วย Pattern Matching (`match`) ตั้งแต่ตอนคอมไพล์ ทำให้โปรแกรมทำงานได้เร็วและไม่มีทางเกิด Unhandled Exception แอบแฝง
 
 ---
 
@@ -954,7 +1156,11 @@ Structs & Methods ใน Rust **ไม่ได้เป็นแค่การ
 1. `[The Rust Programming Language — Rust Book]`
 2. `[Rust by Example / Rust Reference]`
 3. `[Official documentation ที่เกี่ยวข้องกับ Topic]`
-4. `[แหล่งอ้างอิงเพิ่มเติม]`
+4. `[https://www.w3schools.com/rust]`
+5. `[https://users.rust-lang.org/]`
+5. `[https://medium.com/@sathabhronchangchuea/rust-%E0%B8%97%E0%B8%B3%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%A3%E0%B8%B9%E0%B9%89%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%81%E0%B8%B1%E0%B8%9A-ownership-references-borrow-%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%A3-memory-903e42a0e9cd]`
+
+
 
 ---
 
@@ -964,8 +1170,9 @@ Structs & Methods ใน Rust **ไม่ได้เป็นแค่การ
 
 | AI Tool         | Purpose       | How the Result Was Verified |
 | --------------- | ------------- | --------------------------- |
-| `[เช่น ChatGPT]` | `[ใช้เพื่ออะไร]` | `[ตรวจสอบอย่างไร]`           |
-| `[AI tool]`     | `[ใช้เพื่ออะไร]` | `[ตรวจสอบอย่างไร]`           |
+| `[ChatGPT]`    | `[วิเคราะห์ สรุป และช่วยตรวจสอบเนื้อหาเกี่ยวกับ Rust Structs & Methods และการเปรียบเทียบภาษา]` | `[ใช้ claude ในการตรวจสอบ]`           |
+| `[Gemini]`     | `[วิเคราะห์ สรุป และช่วยตรวจสอบเนื้อหาเกี่ยวกับ Rust Structs & Methods และการเปรียบเทียบภาษา]` | `[ใช้ GPT,Claude ในการตรวจสอบ] `           |
+| `[claude]`     | `[ใช้เพื่อตรวจสอบการทำงานของ ChatGPT,Gemini]` | `[สมาชิกกลุ่มอ่านทานร่วมกัน แบบ Manual ทุกประโยค และเทียบเคียงกับนิยามอย่างเป็นทางการใน The Rust Reference ก่อนสรุปเนื้อหา] `           |
 
 ### Declaration
 

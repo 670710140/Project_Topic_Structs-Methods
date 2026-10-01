@@ -402,6 +402,14 @@ struct Student {
             println!("อายุ: {}", self.age);
         }
     }
+fn main() {
+    // สร้าง instance ของ Student
+    let student = Student {
+        name: String::from("สมชาย ใจดี"),
+        age: 20,
+    };
+    student.show_info();
+}
 ```
 
 **Correct Code**
@@ -417,6 +425,14 @@ struct Student {
             println!("อายุ: {}", self.age);
         }
     }
+fn main() {
+    // สร้าง instance ของ Student
+    let student = Student {
+        name: String::from("สมชาย ใจดี"),
+        age: 20,
+    };
+    student.show_info();
+}
 ```
 
 **Why?**
@@ -1131,19 +1147,19 @@ def main():
 
 **Member 1**
 
-`[สิ่งที่รับผิดชอบ]`
+`[Concept + Short Code Illustration]`
 
 **Member 2**
 
-`[สิ่งที่รับผิดชอบ]`
+`[Detailed Code + Live Demo ]`
 
 **Member 3**
 
-`[สิ่งที่รับผิดชอบ]`
+`[Rust vs Other Language + PPL Analysis ]`
 
 **Member 4**
 
-`[สิ่งที่รับผิดชอบ]`
+`[Exercises + Common Mistakes + Challenge ]`
 
 > สมาชิกทุกคนต้องสามารถอธิบาย Code ของกลุ่มได้ ไม่ใช่เฉพาะส่วนที่ตนเองเขียน
 
@@ -1156,11 +1172,17 @@ def main():
 1. `[The Rust Programming Language — Rust Book]`
 2. `[Rust by Example / Rust Reference]`
 3. `[Official documentation ที่เกี่ยวข้องกับ Topic]`
+4. `[แหล่งอ้างอิงเพิ่มเติม]`
+=======
+4. `[https://www.w3schools.com/rust]`
+5. `[https://users.rust-lang.org/]`
+6. `[https://medium.com/@sathabhronchangchuea/rust-%E0%B8%97%E0%B8%B3%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%A3%E0%B8%B9%E0%B9%89%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%81%E0%B8%B1%E0%B8%9A-ownership-references-borrow-%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%A3-memory-903e42a0e9cd]`
+
+
+=======
 4. `[https://www.w3schools.com/rust]`
 5. `[https://users.rust-lang.org/]`
 5. `[https://medium.com/@sathabhronchangchuea/rust-%E0%B8%97%E0%B8%B3%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%A3%E0%B8%B9%E0%B9%89%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%81%E0%B8%B1%E0%B8%9A-ownership-references-borrow-%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%A3-memory-903e42a0e9cd]`
-
-
 
 ---
 
@@ -1176,14 +1198,14 @@ def main():
 
 ### Declaration
 
-- [ ] Code ทุกส่วนที่นำเสนอได้รับการ Compile และทดสอบแล้ว
-- [ ] สมาชิกทุกคนสามารถอธิบาย Code ที่นำเสนอได้
-- [ ] ตรวจสอบข้อมูลจากแหล่งอ้างอิงที่น่าเชื่อถือแล้ว
-- [ ] ระบุการใช้ AI อย่างโปร่งใส
+- [/] Code ทุกส่วนที่นำเสนอได้รับการ Compile และทดสอบแล้ว
+- [/] สมาชิกทุกคนสามารถอธิบาย Code ที่นำเสนอได้
+- [/] ตรวจสอบข้อมูลจากแหล่งอ้างอิงที่น่าเชื่อถือแล้ว
+- [/] ระบุการใช้ AI อย่างโปร่งใส
 
 **รายละเอียดการใช้ AI**
 
-`[อธิบายว่าใช้ AI ในขั้นตอนใด และสมาชิกตรวจสอบผลลัพธ์อย่างไร]`
+`[ใช้ ai เป็นผู้ช่วยคิด และนำทางการทำไฟล์ และCode บางส่วน]`
 
 ---
 
@@ -1191,55 +1213,56 @@ def main():
 
 | Member   |   Issues |  Commits | Pull Requests | Code Reviews | Contribution  |
 | -------- | -------: | -------: | ------------: | -----------: | ------------- |
-| Member 1 | `[จำนวน]` | `[จำนวน]` |      `[จำนวน]` |     `[จำนวน]` | `[รายละเอียด]` |
-| Member 2 | `[จำนวน]` | `[จำนวน]` |      `[จำนวน]` |     `[จำนวน]` | `[รายละเอียด]` |
-| Member 3 | `[จำนวน]` | `[จำนวน]` |      `[จำนวน]` |     `[จำนวน]` | `[รายละเอียด]` |
-| Member 4 | `[จำนวน]` | `[จำนวน]` |      `[จำนวน]` |     `[จำนวน]` | `[รายละเอียด]` |
+| Member 1 | `[0 ครั้ง]` | `[2 ครั้ง]` |      `[2 ครั้ง]` |     `[0 ครั้ง]` | `[รายละเอียด]` |
+| Member 2 | `[0 ครั้ง]` | `[4 ครั้ง]` |      `[4 ครั้ง]` |     `[0 ครั้ง]` | `[รายละเอียด]` |
+| Member 3 | `[0 ครั้ง]` | `[1 ครั้ง]` |      `[1 ครั้ง]` |     `[0 ครั้ง]` | `[รายละเอียด]` |
+| Member 4 | `[5 ครั้ง]` | `[5 ครั้ง]` |      `[4 ครั้ง]` |     `[0 ครั้ง]` | `[รายละเอียด]` |
+`[ข้อมูลด้านบนมาจาก https://github.com/670710140/Project_Topic_Structs-Methods/tree/main ในไฟล์ rust_tutorial_template.md]`
 
 ### Teamwork Reflection
 
 **How did your team collaborate?**
 
-`[อธิบายกระบวนการทำงานร่วมกัน]`
+`[เราแบ่งงานกันเป็นส่วนๆ และทำงานในส่วนของตัวเอง และเราแบ่งการทำงานส่วนกลาง เป็นงานส่วนรวม เราแยกกันทำตามที่ระบบ Github สามารถทำได้ ใครทำเสร็จแล้วให้อัปโหลด เข้า main ส่วนกลาง]`
 
 **Problems encountered**
 
-`[ปัญหาที่พบ]`
+`[ปัญหาที่พบบคือ การทำงานร่วมกันบน Github ยังไม่ค่อยคุ้นชิน จึงทำให้งานล่าช้า]`
 
 **How did you solve them?**
 
-`[วิธีแก้ปัญหา]`
+`[เรียนรู้วิธีใช้ Github ผ่าน youtube และ AI สอนเบื้องต้นเป็นเพื่อนช่วยคิด]`
 
 ---
 
 ## 15. Final Checklist
 
-- [ ] Learning Objectives ครบ 3–4 ข้อ
-- [ ] Key Concepts ครบถ้วน
-- [ ] Syntax / Rules
-- [ ] Runnable Code Examples
-- [ ] Code Compile และ Run ได้จริง
-- [ ] Common Mistakes
-- [ ] Exercises 2 ข้อ พร้อม Solutions
-- [ ] PPL Perspective
-- [ ] Rust vs Other Language
-- [ ] References อย่างน้อย 4 แหล่ง
-- [ ] AI Usage Declaration
-- [ ] GitHub Contribution
-- [ ] สมาชิกทั้ง 4 คนมีส่วนร่วม
-- [ ] สมาชิกทั้ง 4 คนพร้อมนำเสนอคนละ 5 นาที
-- [ ] สมาชิกทุกคนสามารถอธิบาย Code ของกลุ่มได้
+- [/] Learning Objectives ครบ 3–4 ข้อ
+- [/] Key Concepts ครบถ้วน
+- [/] Syntax / Rules
+- [/] Runnable Code Examples
+- [/] Code Compile และ Run ได้จริง
+- [/] Common Mistakes
+- [/] Exercises 2 ข้อ พร้อม Solutions
+- [/] PPL Perspective
+- [/] Rust vs Other Language
+- [/] References อย่างน้อย 4 แหล่ง
+- [/] AI Usage Declaration
+- [/] GitHub Contribution
+- [/] สมาชิกทั้ง 4 คนมีส่วนร่วม
+- [ ] สมาชิกทั้ง 4 คนพร้อมนำเสนอคนละ 5 นาที `[เนื่องจากเพื่อนในกลุ่มเหลือ 3 คนจึงไม่ครบเงื่อนไข]`
+- [/] สมาชิกทุกคนสามารถอธิบาย Code ของกลุ่มได้
 
 ---
 
 ## Submission Information
 
-**Repository:** `[GitHub repository URL]`
+**Repository:** `[https://github.com/soonklang/rust-tutorial-2569/tree/main/08-structs-methods]`
 
 **Chapter Path:** `[เช่น chapters/01-introduction/]`
 
 **Final PR:** `#[PR number]`
 
-**Submitted by:** `[Group XX]`
+**Submitted by:** `[Group 8]`
 
 **Date:** `[YYYY-MM-DD]`

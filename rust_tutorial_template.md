@@ -1213,10 +1213,10 @@ def main():
 
 | Member   |   Issues |  Commits | Pull Requests | Code Reviews | Contribution  |
 | -------- | -------: | -------: | ------------: | -----------: | ------------- |
-| Member 1 | `[0 ครั้ง]` | `[2 ครั้ง]` |      `[2 ครั้ง]` |     `[0 ครั้ง]` | `[รายละเอียด]` |
-| Member 2 | `[0 ครั้ง]` | `[4 ครั้ง]` |      `[4 ครั้ง]` |     `[0 ครั้ง]` | `[รายละเอียด]` |
-| Member 3 | `[0 ครั้ง]` | `[1 ครั้ง]` |      `[1 ครั้ง]` |     `[0 ครั้ง]` | `[รายละเอียด]` |
-| Member 4 | `[5 ครั้ง]` | `[5 ครั้ง]` |      `[4 ครั้ง]` |     `[0 ครั้ง]` | `[รายละเอียด]` |
+| Member 1 | `[0 ครั้ง]` | `[2 ครั้ง]` |      `[2 ครั้ง]` |     `[0 ครั้ง]` | `[Concept + Short Code Illustration ]` |
+| Member 2 | `[0 ครั้ง]` | `[4 ครั้ง]` |      `[4 ครั้ง]` |     `[0 ครั้ง]` | `[Detailed Code + Live Demo ]` |
+| Member 3 | `[0 ครั้ง]` | `[1 ครั้ง]` |      `[1 ครั้ง]` |     `[0 ครั้ง]` | `[Rust vs Other Language + PPL Analysis ]` |
+| Member 4 | `[5 ครั้ง]` | `[5 ครั้ง]` |      `[4 ครั้ง]` |     `[0 ครั้ง]` | `[Exercises + Common Mistakes + Challenge]` |
 `[ข้อมูลด้านบนมาจาก https://github.com/670710140/Project_Topic_Structs-Methods/tree/main ในไฟล์ rust_tutorial_template.md]`
 
 ### Teamwork Reflection

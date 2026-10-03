@@ -190,15 +190,28 @@ fn main() {
 
 | Syntax / Rule   | Meaning      | Example    |
 | --------------- | ------------ | ---------- |
-| `[syntax/rule]` | `[ความหมาย]` | `[ตัวอย่าง]` |
-| `[syntax/rule]` | `[ความหมาย]` | `[ตัวอย่าง]` |
-| `[syntax/rule]` | `[ความหมาย]` | `[ตัวอย่าง]` |
+| `[struct Name { field: Type }]` | `[Classic Struct: ประกาศโครงสร้างข้อมูลแบบมีชื่อฟิลด์ชัดเจน]` | `[struct Rectangle { width: u32, height: u32 }]` |
+| `[struct Name(Type, Type);]` | `[Tuple Struct: โครงสร้างข้อมูลที่ไม่ระบุชื่อฟิลด์ แต่ใช้อ้างอิงด้วยดัชนีตำแหน่ง]` | `[struct Point(i32, i32);]` |
+| `[struct Name;]` | `[Unit-like Struct: โครงสร้างข้อมูลที่ไม่มีฟิลด์ นิยมใช้จัดกลุ่ม behavior หรือ trait]` | `[struct AlwaysEqual;]` |
+| `[impl Name { ... }]` | `[Implementation Block: บล็อกสำหรับนิยาม Method และ Associated Function ให้กับ Struct]` | `[impl Rectangle { ... }]` |
+| `[&self]` | `[Immutable Borrow: Method อ่านข้อมูลได้อย่างเดียว ไม่สามารถแก้ไขค่าใน Struct ได้]` | `[fn area(&self) -> u32 { self.width * self.height }]` |
+| `[&mut self]` | `[Mutable Borrow: Method สามารถแก้ไขข้อมูลใน Struct ได้]` | `[fn scale(&mut self, factor: u32) { self.width *= factor; }]` |
+| `[self]` | `[Take Ownership: Method รับยึด Ownership ไป ทำให้ instance เดิมใช้ต่อไม่ได้]` | `[fn destroy(self) { ... }]` |
+| `[Name::fn_name()]` | `[Associated Function: ฟังก์ชันภายใน impl ที่ไม่มี self (มักใช้ทำ Constructor)]` | `[let r = Rectangle::new(10, 20);]` |
 
 ### Important Rules
 
-1. `[กฎสำคัญข้อที่ 1]`
-2. `[กฎสำคัญข้อที่ 2]`
-3. `[กฎสำคัญข้อที่ 3]`
+1. `[การแก้ไขค่าต้องประกาศ mut (Mutability) หากต้องการแก้ไขค่าในฟิลด์ หรือเรียกใช้ Method ที่รับพารามิเตอร์เป็น &mut self ตัวแปรที่สร้าง instance นั้นจะต้องถูกประกาศด้วย let mut เสมอ]`
+
+2. `[การย้าย Ownership ด้วย self หาก Method รับพารามิเตอร์เป็น self (ไม่มี &) Ownership ของ instance จะถูกย้าย (Move) เข้าไปใน Method นั้นทันที และจะถูกทำลายเมื่อจบ Method ทำให้ไม่สามารถนำตัวแปรเดิมมาใช้งานได้อีก]`
+   
+3. `[กฎความเป็นเอกสิทธิ์ของการอ้างอิง (Borrowing Rules) ภาษา Rust ไม่อนุญาตให้สร้าง &mut self (Mutable Reference) ซ้ำกันในเวลาเดียวกัน และไม่สามารถมี &mut self ร่วมกับ &self (Immutable Reference) ในขอบเขตเวลาเดียวกันได้]`
+
+4. `[Associated Functions ต้องเรียกผ่าน :: ฟังก์ชันในบล็อก impl ที่ไม่มีพารามิเตอร์ self (เช่น new()) ถือเป็น Associated Function ไม่ใช่ Method จึงต้องเรียกใช้ผ่านชื่อ Struct ร่วมกับสัญลักษณ์ :: ไม่ใช่การใช้จุด .]`
+
+5. `[สามารถแยกบล็อก impl ออกเป็นหลายบล็อกได้ (Multiple impl blocks) ภาษา Rust อนุญาตให้เขียนบล็อก impl แยกกันหลายๆ บล็อกสำหรับ Struct เดียวกันได้ เพื่อช่วยในการจัดหมวดหมู่โค้ดให้เป็นระเบียบ]`
+
+6. `[ความปลอดภัยในการเข้าถึงข้อมูล (Field Visibility) ฟิลด์ภายใน Struct และตัว Method จะเป็น Private โดยสัญชาตญาณ (Default) หากต้องการให้โมดูลอื่นเข้าถึงได้ จะต้องเติมคีย์เวิร์ด pub ข้างหน้าฟิลด์หรือ Method นั้นๆ]`
 
 ---
 
